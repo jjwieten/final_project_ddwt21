@@ -21,6 +21,10 @@ $navigation_template = Array(
     2 => Array(
         'name' => 'Overview',
         'url' => '/final_project_ddwt21/overview/'
+    ),
+    3 => Array(
+        'name' => 'Register',
+        'url'   => '/final_project_ddwt21/register/'
     ));
 
 
@@ -64,6 +68,28 @@ $router->get('/overview/', function() use($navigation_template, $db){
 
     /* Choose Template */
     include use_template('main');
+});
+
+/* GET register */
+$router->get('/register/', function() use($navigation_template, $db){
+    /* Page info */
+    $page_title = 'Register';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Register' => na('/final_project_ddwt21/register/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 2);
+
+    /* Page content */
+    $page_subtitle = 'Overview of rooms';
+    $page_content = 'An overview of the rooms. For more information click on More Info';
+    $left_content = get_rooms_table($db);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('register');
 });
 
 

@@ -1,3 +1,112 @@
-/* Template for profile registration */
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<?php
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/css/bootstrap.min.css" integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Own CSS -->
+    <link rel="stylesheet" href="/final_project_ddwt21/css/main.css">
+
+
+    <title><?= $page_title ?></title>
+</head>
+<body>
+<!-- Menu -->
+<?= $navigation ?>
+
+<!-- Content -->
+<div class="container">
+    <!-- Breadcrumbs -->
+    <div class="pd-15">&nbsp</div>
+    <?= $breadcrumbs ?>
+
+    <div class="row">
+
+        <!-- Left column -->
+        <div class="col-md-12">
+            <!-- Error message -->
+            <?php if (isset($error_msg)){echo $error_msg;} ?>
+
+            <h1><?= $page_title ?></h1>
+            <h5><?= $page_subtitle ?></h5>
+
+            <div class="pd-15">&nbsp;</div>
+
+            <form action="<?= $form_action ?>" method="POST">
+                <div class="form-group">
+                    <label for="inputUsername">Username</label>
+                    <input type="text" class="form-control" id="inputUsername" placeholder="Sandy" name="username" value="<?php if (isset($user_info)){echo $user_info['username'];} ?>" required>
+                </div>
+                <?php if (!isset($user_info)){ echo
+                '<div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" id="inputPassword" placeholder="******" name="password"  required>
+                </div>';} ?>
+                <div class="form-group">
+                    <label for="inputUsername">First name</label>
+                    <input type="text" class="form-control" id="inputUsername" placeholder="Kayla" name="firstname" value="<?php if (isset($user_info)){echo $user_info['firstname'];} ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputUsername">Last name</label>
+                    <input type="text" class="form-control" id="inputUsername" placeholder="Graversma" name="lastname" value="<?php if (isset($user_info)){echo $user_info['lastname'];} ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputDate">Birthday</label>
+                    <input type="date" class="form-control" id="inputDate" placeholder="" name="date"  value="<?php if (isset($user_info)){echo $user_info['birthdate'];} ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputPhone">Phone number</label>
+                    <input type="number" class="form-control" id="inputPhone" placeholder="00000000" name="phone" value="<?php if (isset($user_info)){echo $user_info['phone_number'];} ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail">Email</label>
+                    <input type="email" class="form-control" id="inputEmail" placeholder="sandy@gmail.com" name="email" value="<?php if (isset($user_info)){echo $user_info['email'];} ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputLanguage">Language</label>
+                    <input type="text" class="form-control" id="inputLanguage" placeholder="Nederlands" name="language" value="<?php if (isset($user_info)){echo $user_info['language'];} ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputST">Studies/Profession</label>
+                    <input type="text" class="form-control" id="inputST" placeholder="Student" name="st" value="<?php if (isset($user_info)){echo $user_info['studies_profession'];} ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputBio">Biography</label>
+                    <input type="text" class="form-control" id="inputBio" placeholder="Kayla's bio" name="bio" value="<?php if (isset($user_info)){echo $user_info['bio'];} ?>" required>
+                </div>
+                <?php if (!isset($user_info)){ echo
+                '                <div class="form-group">
+                    <label for="inputAccount">Account type: </label>
+                    <select name="account_type_id" id="account">
+                        <option value="1">Eigenaar</option>
+                        <option value="2">Gebruiker</option>
+                    </select>  </div>';} else{
+                    echo '<input type="hidden" name="user_id" value="'. $user_id.'">';
+                } ?>
+
+                <?php if (!isset($user_info)){ echo
+                '<button type="submit" class="btn btn-primary">Registreer nu</button>';} else{
+                    echo
+                    '<button type="submit" class="btn btn-warning">Edit</button>';
+                } ?>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha512-/DXTXr6nQodMUiq+IUJYCt2PPOUjrHJ9wFrqpJ3XkgPNOZVfMok7cRw6CSxyCQxXn6ozlESsSh1/sMCTF1rL/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js" integrity="sha512-ubuT8Z88WxezgSqf3RLuNi5lmjstiJcyezx34yIU2gAHonIi27Na7atqzUZCOoY4CExaoFumzOsFQ2Ch+I/HCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.min.js" integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>
