@@ -47,12 +47,12 @@
                     <input type="password" class="form-control" id="inputPassword" placeholder="******" name="password"  required>
                 </div>';} ?>
                 <div class="form-group">
-                    <label for="inputUsername">First name</label>
-                    <input type="text" class="form-control" id="inputUsername" placeholder="Kayla" name="firstname" value="<?php if (isset($user_info)){echo $user_info['firstname'];} ?>" required>
+                    <label for="inputFirstname">First name</label>
+                    <input type="text" class="form-control" id="inputFirstname" placeholder="Kayla" name="firstname" value="<?php if (isset($user_info)){echo $user_info['firstname'];} ?>" required>
                 </div>
                 <div class="form-group">
-                    <label for="inputUsername">Last name</label>
-                    <input type="text" class="form-control" id="inputUsername" placeholder="Graversma" name="lastname" value="<?php if (isset($user_info)){echo $user_info['lastname'];} ?>" required>
+                    <label for="inputLastname">Last name</label>
+                    <input type="text" class="form-control" id="inputLastname" placeholder="Graversma" name="lastname" value="<?php if (isset($user_info)){echo $user_info['lastname'];} ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="inputDate">Birthday</label>
