@@ -9,3 +9,9 @@
 .card-body .count {
     margin: 0;
 }
+
+.no-overflow {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

@@ -25,6 +25,10 @@ $navigation_template = Array(
     3 => Array(
         'name' => 'Register',
         'url'   => '/final_project_ddwt21/register/'
+    ),
+    4 => Array(
+        'name' => 'Messages',
+        'url'   => '/final_project_ddwt21/messages/'
     ));
 
 
@@ -90,6 +94,32 @@ $router->get('/register/', function() use($navigation_template, $db){
 
     /* Choose Template */
     include use_template('register');
+});
+
+/* GET messages */
+$router->get('/messages/', function() use($navigation_template, $db){
+    /* Page info */
+    $current_user = 1; /* Will be replaced by line below */
+    // $current_user = $_SESSION['user_id'];
+    $chat_id = $_GET['chat_id'];
+    $page_title = 'Messages';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Messages' => na('/final_project_ddwt21/messages/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 4);
+
+    /* Page content */
+    $conversation_overview = get_conversation_overview_divs($db, $current_user);
+    if (isset($chat_id)){
+        $chat = get_messages_divs($db, $current_user, $chat_id);
+    }
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('messages');
 });
 
 
