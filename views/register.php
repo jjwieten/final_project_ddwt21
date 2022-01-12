@@ -72,11 +72,11 @@
                 </div>
                 <div class="form-group">
                     <label for="inputST">Studies/Profession</label>
-                    <input type="text" class="form-control" id="inputST" placeholder="Student" name="st" value="<?php if (isset($user_info)){echo $user_info['studies_profession'];} ?>" required>
+                    <input type="text" class="form-control" id="inputST" placeholder="Student" name="profession" value="<?php if (isset($user_info)){echo $user_info['studies_profession'];} ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="inputBio">Biography</label>
-                    <input type="text" class="form-control" id="inputBio" placeholder="Kayla's bio" name="bio" value="<?php if (isset($user_info)){echo $user_info['bio'];} ?>" required>
+                    <input type="text" class="form-control" id="inputBio" placeholder="Kayla's bio" name="biography" value="<?php if (isset($user_info)){echo $user_info['bio'];} ?>" required>
                 </div>
                 <?php if (!isset($user_info)){ echo
                 '                <div class="form-group">

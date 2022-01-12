@@ -91,10 +91,36 @@ $router->get('/register/', function() use($navigation_template, $db){
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+        /* register user */
+        register_user($db,$_POST);
+        /* Redirect to homepage*/
+        redirect('/final_project_ddwt21');
+
+    }
+    if (isset($_POST['submit'])){
+        /* register user */
+        register_user($db,$_POST);
+        /* Redirect to homepage*/
+        redirect('/final_project_ddwt21');
+
+
+    }
 
     /* Choose Template */
     include use_template('register');
 });
+
+/* POST register */
+$router->post('/register', function() use($db){
+    /* register user */
+    register_user($db,$_POST);
+    /* Redirect to homepage*/
+    redirect('/final_project_ddwt21');
+
+});
+
+
 
 /* GET messages */
 $router->get('/messages/', function() use($navigation_template, $db){

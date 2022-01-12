@@ -297,3 +297,66 @@ function get_conversation_overview_divs($pdo, $user1){
     $conversation_divs .= '</div>';
     return $conversation_divs;
 }
+
+/**
+ * This function takes form data input and puts it into the database
+ * @param PDO $pdo Database object
+ * @param $form_data User info for registration
+ * return string response
+ */
+function register_user($pdo, $form_data){
+    if (
+        empty($form_data['username']) or
+        empty($form_data['password']) or
+        empty($form_data['firstname']) or
+        empty($form_data['lastname']) or
+        empty($form_data['birthdate']) or
+        empty($form_data['biography']) or
+        empty($form_data['profession']) or
+        empty($form_data['language']) or
+        empty($form_data['email']) or
+        empty($form_data['phone_nr'])
+
+    ){return [
+        'type' => 'danger',
+        'message' => 'Please fill in all forms'
+    ]; }
+    /* Check if user already exists */
+    try {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$form_data['username']]);
+        $user_exists = $stmt->rowCount();
+    } catch (\PDOException $error) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $error->getMessage())
+        ];
+    }
+    /* Return error message for existing username */
+    if ( !empty($user_exists) ) {
+        return [
+            'type' => 'danger',
+            'message' => 'The username you entered does already exists!'
+        ];
+    }
+
+    /* Hash password */
+    $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
+
+    try {
+        $stmt -> $pdo->prepare('INSERT into users (username, password, role, firstname, lastname, birth_date, biograpgy, profession, language, email, phone_nr) VALUES(?,?,?,?,?,?,?,?.?,?,?)');
+        $stmt ->execute([$form_data['username'],$password,
+            $form_data['account'],
+            $form_data['firstname'],$form_data['lastname'],
+            $form_data['birthdate'],
+            $form_data['biography'],$form_data['profession'],$form_data['language'],
+            $form_data['email'],$form_data['phone_nr']]);
+    } catch (PDOException $error_msg) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $error_msg->getMessage())
+        ];
+
+    }
+
+}
