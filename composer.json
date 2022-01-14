@@ -1,6 +1,8 @@
 {
     "name": "jjwieten/final_project_ddwt21",
     "require": {
-        "bramus/router": "1.5"
+        "bramus/router": "1.5",
+        "ext-pdo": "*",
+        "ext-json": "*"
     }
 }

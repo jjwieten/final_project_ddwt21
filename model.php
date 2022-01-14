@@ -342,7 +342,7 @@ function register_user($pdo, $form_data){
 
     /* Hash password */
     $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
-
+    var_dump($form_data);
     try {
         $stmt -> $pdo->prepare('INSERT into users (username, password, role, firstname, lastname, birth_date, biograpgy, profession, language, email, phone_nr) VALUES(?,?,?,?,?,?,?,?.?,?,?)');
         $stmt ->execute([$form_data['username'],$password,
@@ -351,6 +351,12 @@ function register_user($pdo, $form_data){
             $form_data['birthdate'],
             $form_data['biography'],$form_data['profession'],$form_data['language'],
             $form_data['email'],$form_data['phone_nr']]);
+        $feedback = [
+            'type' => 'success',
+            'message' => sprintf('%s, your account was successfully created!', get_username($pdo, $_SESSION['user_id']))
+        ];
+        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+            json_encode($feedback)));
     } catch (PDOException $error_msg) {
         return [
             'type' => 'danger',
@@ -359,4 +365,116 @@ function register_user($pdo, $form_data){
 
     }
 
+}
+
+/* Function to login the user */
+function login_user($pdo, $form_data)
+{
+    /* Check if all fields are set */
+    if (
+        empty($form_data['username']) or
+        empty($form_data['password'])
+
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You should enter a username and password.'
+        ];
+    }
+
+    /* Check if user exists */
+    try {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$form_data['username']]);
+        $user_info = $stmt->fetch();
+    } catch (\PDOException $e) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
+    /* Return error message for wrong username */
+    if (empty($user_info)) {
+        return [
+            'type' => 'danger',
+            'message' => 'The username you entered does not exist!'
+        ];
+    }
+
+    /* Return error message for wrong password */
+    if (!password_verify($form_data['password'], $user_info['password'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'The password you entered is incorrect!'
+        ];
+    } else {
+        session_start();
+        $_SESSION['user_id'] = $user_info['user_id'];
+        $feedback = [
+            'type' => 'success',
+            'message' => sprintf('%s, you were logged in successfully!')
+        ];
+        
+        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+            urlencode(json_encode($feedback))));
+    }
+}
+
+/* Checks if logged in */
+function check_login(){
+    session_start();
+    if (isset($_SESSION['user_id'])){
+        return True;
+    } else {
+        return False;
+    }
+}
+
+/* This function logs you out */
+function logout(){
+    session_start();
+    session_destroy();
+    $feedback = [
+        'type' => 'success',
+        'message' => 'You were logged out successfully!'
+    ];
+    redirect(sprintf('/final_project_ddwt21/overview/?error_msg=%s',
+        urlencode(json_encode($feedback))));
+
+}
+
+/**
+ * Changes the HTTP Header to a given location
+ * @param string $location Location to redirect to
+ */
+function redirect($location){
+    header(sprintf('Location: %s', $location));
+    die();
+}
+
+
+/* Get user name */
+function get_username($pdo, $series_id){
+    $stmt = $pdo->prepare('SELECT username FROM users WHERE user_id = ?');
+    $stmt->execute([$series_id]);
+    $username = $stmt->fetch();
+    $user_name = implode( " ", $username );
+
+    return $user_name;
+}
+
+
+/**
+ * Creates HTML alert code with information about the success or failure
+ * @param array $feedback Array with keys 'type' and 'message'.
+ * @return string
+ */
+function get_error($feedback){
+    $feedback = json_decode($feedback, True);
+    $error_exp = '
+       <div class="alert alert-'.$feedback['type'].'" role="alert">
+           '.$feedback['message'].'
+       </div>';
+
+    return $error_exp;
 }

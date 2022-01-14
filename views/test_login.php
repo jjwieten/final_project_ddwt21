@@ -11,7 +11,6 @@
     <!-- Own CSS -->
     <link rel="stylesheet" href="/final_project_ddwt21/css/main.css">
 
-
     <title><?= $page_title ?></title>
 </head>
 <body>
@@ -27,32 +26,25 @@
     <div class="row">
 
         <!-- Left column -->
-        <div class="col-md-12">
+        <div class="col-md-8">
             <!-- Error message -->
             <?php if (isset($error_msg)){echo $error_msg;} ?>
 
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
+            <p><?= $page_content ?></p>
+            <?php if(isset($left_content)){echo $left_content;} ?>
+        </div>
 
-            <div class="pd-15">&nbsp;</div>
+        <!-- Right column -->
+        <div class="col-md-4">
 
-            <form action="/final_project_ddwt21/login/" method="POST">
-                <div class="form-group">
-                    <label for="inputUsername">Username</label>
-                    <input type="text" class="form-control" id="inputUsername" placeholder="Enter username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="inputPassword">Password</label>
-                    <input type="password" class="form-control" id="inputPassword" placeholder="Enter password" name="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
+            <?php include $right_column ?>
 
         </div>
 
     </div>
 </div>
-
 
 
 <!-- Optional JavaScript -->

@@ -29,6 +29,14 @@ $navigation_template = Array(
     4 => Array(
         'name' => 'Messages',
         'url'   => '/final_project_ddwt21/messages/'
+    ),
+    5 => Array(
+        'name' => 'Login',
+        'url'   => '/final_project_ddwt21/login/'
+    ),
+    6 => Array(
+        'name' => 'Test_login',
+        'url'  => '/final_project_ddwt21/test_login/'
     ));
 
 
@@ -91,36 +99,30 @@ $router->get('/register/', function() use($navigation_template, $db){
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
-    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-        /* register user */
-        register_user($db,$_POST);
-        /* Redirect to homepage*/
-        redirect('/final_project_ddwt21');
-
-    }
-    if (isset($_POST['submit'])){
-        /* register user */
-        register_user($db,$_POST);
-        /* Redirect to homepage*/
-        redirect('/final_project_ddwt21');
 
 
-    }
 
     /* Choose Template */
     include use_template('register');
 });
 
 /* POST register */
-$router->post('/register', function() use($db){
+$router->post('/register/', function() use($db){
     /* register user */
     register_user($db,$_POST);
     /* Redirect to homepage*/
-    redirect('/final_project_ddwt21');
+    redirect('/final_project_ddwt21/');
 
 });
 
+/* POST login */
+$router->post('/login/', function() use($db){
+    /* login user */
+    login_user($db,$_POST);
+    /* Redirect to homepage*/
+    redirect('/final_project_ddwt21/register/');
 
+});
 
 /* GET messages */
 $router->get('/messages/', function() use($navigation_template, $db){
@@ -147,6 +149,56 @@ $router->get('/messages/', function() use($navigation_template, $db){
     /* Choose Template */
     include use_template('messages');
 });
+
+/* GET overview */
+$router->get('/login/', function() use($navigation_template, $db){
+    /* Page info */
+    $page_title = 'Login';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Overview' => na('/final_project_ddwt21/login/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 5);
+
+    /* Page content */
+    $page_subtitle = 'Login here';
+    $page_content = 'Log into your account here';
+    $left_content = get_rooms_table($db);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('login');
+});
+
+/* GET overview */
+$router->get('/test_login/', function() use($navigation_template, $db){
+
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    /* Page info */
+    $page_title = 'Test login';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Overview' => na('/final_project_ddwt21/test_login/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 6);
+
+    /* Page content */
+    $page_subtitle = 'You are logged in';
+    $page_content = 'You are logged in';
+    $left_content = get_rooms_table($db);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('test_login');
+});
+
 
 
 /* Run the router */
