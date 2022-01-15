@@ -56,11 +56,11 @@
                 </div>
                 <div class="form-group">
                     <label for="inputDate">Birthday</label>
-                    <input type="date" class="form-control" id="inputDate" placeholder="" name="date"  value="<?php if (isset($user_info)){echo $user_info['birthdate'];} ?>" required>
+                    <input type="date" class="form-control" id="inputDate" placeholder="" name="birth_date"  value="<?php if (isset($user_info)){echo $user_info['birth_date'];} ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="inputPhone">Phone number</label>
-                    <input type="number" class="form-control" id="inputPhone" placeholder="00000000" name="phone" value="<?php if (isset($user_info)){echo $user_info['phone_number'];} ?>" required>
+                    <input type="number" class="form-control" id="inputPhone" placeholder="00000000" name="phone_nr" value="<?php if (isset($user_info)){echo $user_info['phone_nr'];} ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail">Email</label>
@@ -72,11 +72,11 @@
                 </div>
                 <div class="form-group">
                     <label for="inputST">Studies/Profession</label>
-                    <input type="text" class="form-control" id="inputST" placeholder="Student" name="profession" value="<?php if (isset($user_info)){echo $user_info['studies_profession'];} ?>" required>
+                    <input type="text" class="form-control" id="inputST" placeholder="Student" name="profession" value="<?php if (isset($user_info)){echo $user_info['profession'];} ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="inputBio">Biography</label>
-                    <input type="text" class="form-control" id="inputBio" placeholder="Kayla's bio" name="biography" value="<?php if (isset($user_info)){echo $user_info['bio'];} ?>" required>
+                    <input type="text" class="form-control" id="inputBio" placeholder="Kayla's bio" name="biography" value="<?php if (isset($user_info)){echo $user_info['biography'];} ?>" required>
                 </div>
                 <?php if (!isset($user_info)){ echo
                 '                <div class="form-group">

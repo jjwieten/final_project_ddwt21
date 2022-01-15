@@ -33,10 +33,6 @@ $navigation_template = Array(
     5 => Array(
         'name' => 'Login',
         'url'   => '/final_project_ddwt21/login/'
-    ),
-    6 => Array(
-        'name' => 'Test_login',
-        'url'  => '/final_project_ddwt21/test_login/'
     ));
 
 
@@ -90,17 +86,10 @@ $router->get('/register/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Register' => na('/final_project_ddwt21/register/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 2);
-
-    /* Page content */
-    $page_subtitle = 'Overview of rooms';
-    $page_content = 'An overview of the rooms. For more information click on More Info';
-    $left_content = get_rooms_table($db);
+    $navigation = get_navigation($navigation_template, 3);
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
-
-
 
     /* Choose Template */
     include use_template('register');
@@ -108,20 +97,33 @@ $router->get('/register/', function() use($navigation_template, $db){
 
 /* POST register */
 $router->post('/register/', function() use($db){
-    /* register user */
-    register_user($db,$_POST);
-    /* Redirect to homepage*/
-    redirect('/final_project_ddwt21/');
-
+    /* Register user */
+    $feedback = register_user($db, $_POST);
+   
+    if($feedback['type'] == 'danger') {
+        /* Redirect to register form */
+        redirect(sprintf('/final_project_ddwt21/register/?error_msg=%s',
+                 json_encode($feedback)));
+    } else {
+        /* Redirect to My Account page */
+        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                 json_encode($feedback)));
+    }
 });
 
 /* POST login */
 $router->post('/login/', function() use($db){
-    /* login user */
-    login_user($db,$_POST);
-    /* Redirect to homepage*/
-    redirect('/final_project_ddwt21/register/');
-
+    /* Login user */
+    $feedback = login_user($db, $_POST);
+    if($feedback['type'] == 'danger') {
+        /* Redirect to login screen */
+        redirect(sprintf('/final_project_ddwt21/login/?error_msg=%s',
+                 json_encode($feedback)));
+    } else {
+        /* Redirect to My Account page */
+        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                 json_encode($feedback)));
+    }
 });
 
 /* GET messages */
@@ -150,7 +152,7 @@ $router->get('/messages/', function() use($navigation_template, $db){
     include use_template('messages');
 });
 
-/* GET overview */
+/* GET login */
 $router->get('/login/', function() use($navigation_template, $db){
     /* Page info */
     $page_title = 'Login';
@@ -163,7 +165,6 @@ $router->get('/login/', function() use($navigation_template, $db){
     /* Page content */
     $page_subtitle = 'Login here';
     $page_content = 'Log into your account here';
-    $left_content = get_rooms_table($db);
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
@@ -171,35 +172,6 @@ $router->get('/login/', function() use($navigation_template, $db){
     /* Choose Template */
     include use_template('login');
 });
-
-/* GET overview */
-$router->get('/test_login/', function() use($navigation_template, $db){
-
-    /* Check if logged in */
-    if ( !check_login() ) {
-        redirect('/final_project_ddwt21/login/');
-    }
-    /* Page info */
-    $page_title = 'Test login';
-    $breadcrumbs = get_breadcrumbs([
-        'Home' => na('/final_project_ddwt21/', False),
-        'Overview' => na('/final_project_ddwt21/test_login/', True)
-    ]);
-    $navigation = get_navigation($navigation_template, 6);
-
-    /* Page content */
-    $page_subtitle = 'You are logged in';
-    $page_content = 'You are logged in';
-    $left_content = get_rooms_table($db);
-
-    /* Get error msg from POST route */
-    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
-
-    /* Choose Template */
-    include use_template('test_login');
-});
-
-
 
 /* Run the router */
 $router->run();

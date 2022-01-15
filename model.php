@@ -310,7 +310,7 @@ function register_user($pdo, $form_data){
         empty($form_data['password']) or
         empty($form_data['firstname']) or
         empty($form_data['lastname']) or
-        empty($form_data['birthdate']) or
+        empty($form_data['birth_date']) or
         empty($form_data['biography']) or
         empty($form_data['profession']) or
         empty($form_data['language']) or
@@ -336,35 +336,39 @@ function register_user($pdo, $form_data){
     if ( !empty($user_exists) ) {
         return [
             'type' => 'danger',
-            'message' => 'The username you entered does already exists!'
+            'message' => 'The username you entered already exists!'
         ];
     }
 
     /* Hash password */
     $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
     var_dump($form_data);
+
+    /* Save user to the database */
     try {
-        $stmt -> $pdo->prepare('INSERT into users (username, password, role, firstname, lastname, birth_date, biograpgy, profession, language, email, phone_nr) VALUES(?,?,?,?,?,?,?,?.?,?,?)');
+        $stmt = $pdo->prepare('INSERT into users (username, password, role, firstname, lastname, birth_date, biography, profession, language, email, phone_nr) VALUES (?,?,?,?,?,?,?,?,?,?,?)');
         $stmt ->execute([$form_data['username'],$password,
-            $form_data['account'],
+            $form_data['account_type_id'],
             $form_data['firstname'],$form_data['lastname'],
-            $form_data['birthdate'],
+            $form_data['birth_date'],
             $form_data['biography'],$form_data['profession'],$form_data['language'],
             $form_data['email'],$form_data['phone_nr']]);
-        $feedback = [
-            'type' => 'success',
-            'message' => sprintf('%s, your account was successfully created!', get_username($pdo, $_SESSION['user_id']))
-        ];
-        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
-            json_encode($feedback)));
+        $user_id = $pdo->lastInsertId();
     } catch (PDOException $error_msg) {
         return [
             'type' => 'danger',
             'message' => sprintf('There was an error: %s', $error_msg->getMessage())
         ];
-
     }
 
+    /* Login user */
+    session_start();
+    $_SESSION['user_id'] = $user_id;
+    return [
+        'type' => 'success',
+        'message' => sprintf('%s, your account was successfully
+    created!', get_user_fullname($pdo, $_SESSION['user_id']))
+    ];
 }
 
 /* Function to login the user */
@@ -374,7 +378,6 @@ function login_user($pdo, $form_data)
     if (
         empty($form_data['username']) or
         empty($form_data['password'])
-
     ) {
         return [
             'type' => 'danger',
@@ -410,13 +413,10 @@ function login_user($pdo, $form_data)
     } else {
         session_start();
         $_SESSION['user_id'] = $user_info['user_id'];
-        $feedback = [
+        return [
             'type' => 'success',
-            'message' => sprintf('%s, you were logged in successfully!')
+            'message' => sprintf('You were logged in successfully!')
         ];
-        
-        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
-            urlencode(json_encode($feedback))));
     }
 }
 
