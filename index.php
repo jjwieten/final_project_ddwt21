@@ -33,7 +33,16 @@ $navigation_template = Array(
     5 => Array(
         'name' => 'Login',
         'url'   => '/final_project_ddwt21/login/'
-    ));
+    ),
+    6 => Array(
+        'name' => 'My Account',
+        'url'   => '/final_project_ddwt21/myaccount/'
+    ),
+    7 => Array(
+        'name' => 'Log out',
+        'url'   => '/final_project_ddwt21/log_out/'
+    )
+);
 
 
 /* Landing page */

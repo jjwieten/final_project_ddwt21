@@ -15,3 +15,19 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+ul {
+    list-style-type: none;
+    margin: 5;
+    padding: 50;
+    background-color: #dddddd;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    padding: 8px;
+}
