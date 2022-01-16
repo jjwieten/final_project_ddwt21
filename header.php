@@ -30,13 +30,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/final_project_ddwt21/overview/">Overview</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/final_project_ddwt21/register/">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/final_project_ddwt21/login/">Login</a>
-                    </li>
-
+                    <!--
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             My account
@@ -50,6 +44,18 @@
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
                     </li>
+                    -->
+                    <?php
+                        if (!check_login()){
+                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/register/'>register</a></li>";
+                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/login/'>Login</a></li>";
+                        }
+                        else {
+                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/messages/'>Messages</a></li>";
+                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/myaccount/'>My account</a></li>";
+                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/logout/'>Logout</a></li>";
+                    };
+                    ?>
                 </ul>
             </div>
         </div>

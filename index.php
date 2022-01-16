@@ -182,5 +182,11 @@ $router->get('/login/', function() use($navigation_template, $db){
     include use_template('login');
 });
 
+$router->get('/logout/', function() use($navigation_template, $db){
+    /* Page info */
+    logout();
+});
+
+
 /* Run the router */
 $router->run();
