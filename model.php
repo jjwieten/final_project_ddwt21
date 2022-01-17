@@ -478,3 +478,60 @@ function get_error($feedback){
 
     return $error_exp;
 }
+
+
+/**
+ * Check if logged in user is owner
+ * @param PDO $pdo  PDO Object
+ * @return bool
+ */
+function is_owner($pdo)
+{
+    $stmt = $pdo->prepare('SELECT role FROM users  WHERE user_id = ?');
+    $stmt->execute([get_user_id()]);
+    /* Create array with htmlspecialchars */
+    $role = $stmt->fetch();
+    if ($role == 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Check if logged in user is owner
+ * @param PDO $pdo  PDO Object
+ * @return bool
+ */
+function is_tenant($pdo)
+{
+    $stmt = $pdo->prepare('SELECT role FROM users  WHERE user_id = ?');
+    $stmt->execute([get_user_id()]);
+    /* Create array with htmlspecialchars */
+    $role = $stmt->fetch();
+    if ($role == 2) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function check_role($pdo){
+    $stmt = $pdo->prepare('SELECT role FROM users  WHERE user_id = ?');
+    $stmt->execute([get_user_id()]);
+    /* Create array with htmlspecialchars */
+    $role = $stmt->fetch();
+    return $role;
+}
+
+/**
+ * Get current user id
+ * @return bool current user id or False if not logged in
+ */
+function get_user_id(){
+    if (isset($_SESSION['user_id'])){
+        return $_SESSION['user_id'];
+    } else {
+        return False;
+    }
+}

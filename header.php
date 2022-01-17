@@ -46,13 +46,21 @@
                     </li>
                     -->
                     <?php
+                        /* Connect to DB */
+                        $db = connect_db('localhost', 'final_project', 'ddwt21','ddwt21');
                         if (!check_login()){
-                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/register/'>register</a></li>";
+                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/register/'>Register</a></li>";
                             echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/login/'>Login</a></li>";
                         }
                         else {
+                            $role_array = check_role($db);
                             echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/messages/'>Messages</a></li>";
-                            echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/myaccount/'>My account</a></li>";
+                            if ($role_array['role'] == '1') {
+                                echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/owner/'>My account</a></li>";
+                            }
+                            elseif ($role_array['role'] == '2'){
+                                echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/tenant/'>My account</a></li>";
+                            }
                             echo "<li class='nav-item'><a class='nav-link' href='/final_project_ddwt21/logout/'>Logout</a></li>";
                     };
                     ?>
