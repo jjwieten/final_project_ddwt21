@@ -203,7 +203,7 @@ function get_messages_divs($pdo, $user1, $user2){
         if ($value['sender_id'] == $user1) {
             $message_divs .= '
             <div class="row">
-                <div class="ml-auto col-md-6 border rounded bg-light my-2 py-1">
+                <div class="ml-auto col-md-8 border rounded bg-info my-2 py-1">
                 <div class="d-flex">
                     <div class="font-weight-light">You</div>
                     <div class="ml-auto font-weight-light small">'.$value['datetime_formatted'].'</div>
@@ -214,7 +214,7 @@ function get_messages_divs($pdo, $user1, $user2){
         } else {
             $message_divs .= '
             <div class="row">
-                <div class="mr-auto col-md-6 border rounded bg-light my-2 py-1">
+                <div class="mr-auto col-md-8 border rounded bg-light my-2 py-1">
                 <div class="d-flex">
                     <div class="font-weight-light">'.$user2_name.'</div>
                     <div class="ml-auto font-weight-light small">'.$value['datetime_formatted'].'</div>
@@ -224,7 +224,14 @@ function get_messages_divs($pdo, $user1, $user2){
             </div>';
         }
     }
-    $message_divs .= '</div><div class="col-md-12 border" style="height:10vh;">Reply (add form in model.php)</div></div>';
+    $message_divs .= '</div>
+    <form action="/final_project_ddwt21/messages/" method="POST">
+    <div class="form-group">
+        <textarea class="form-control" rows="3" id="content" name="content" placeholder="Type your reply here..."></textarea>
+    </div>
+    <input type="hidden" id="receiver_id" name="receiver_id" value='.$user2.'>
+    <input type="submit" value="Send reply" class="btn btn-primary">
+    </form></div>';
 
     return $message_divs;
 }
@@ -296,6 +303,45 @@ function get_conversation_overview_divs($pdo, $user1){
     }
     $conversation_divs .= '</div>';
     return $conversation_divs;
+}
+
+/**
+ * Add message to the database
+ * @param PDO $pdo Database object
+ * @param array $message_info Associative array with message info
+ * @return array Associative array with key type and message
+ */
+function send_message($pdo, $message_info){
+    /* Check if content field is set */
+    if (
+        empty($message_info['content'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'Please type in a message.'
+        ];
+    }
+
+    /* Add message to database */
+    $stmt = $pdo->prepare("INSERT INTO messages (content, sender_id, receiver_id) VALUES (?, ?, ?)");
+    $stmt->execute([
+        $message_info['content'],
+        get_user_id(),
+        $message_info['receiver_id']
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => 'Your message was sent successfully.'
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Your message was not sent. Try it again.'
+        ];
+    }
 }
 
 /**

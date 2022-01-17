@@ -138,9 +138,6 @@ $router->post('/login/', function() use($db){
 /* GET messages */
 $router->get('/messages/', function() use($navigation_template, $db){
     /* Page info */
-    $current_user = 1; /* Will be replaced by line below */
-    // $current_user = $_SESSION['user_id'];
-    $chat_id = $_GET['chat_id'];
     $page_title = 'Messages';
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
@@ -148,17 +145,35 @@ $router->get('/messages/', function() use($navigation_template, $db){
     ]);
     $navigation = get_navigation($navigation_template, 4);
 
-    /* Page content */
-    $conversation_overview = get_conversation_overview_divs($db, $current_user);
-    if (isset($chat_id)){
-        $chat = get_messages_divs($db, $current_user, $chat_id);
+    if(check_login()){
+        /* Page content */
+        $current_user = $_SESSION['user_id'];
+        $chat_id = $_GET['chat_id'];
+        $conversation_overview = get_conversation_overview_divs($db, $current_user);
+        if (isset($chat_id)){
+            $chat = get_messages_divs($db, $current_user, $chat_id);
+        }
     }
+        /* Get error msg from POST route */
+        if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
-    /* Get error msg from POST route */
-    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+        /* Choose Template */
+        include use_template('messages');
+});
 
-    /* Choose Template */
-    include use_template('messages');
+/* POST messages */
+$router->post('/messages/', function() use($db){
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    
+    /* Add message to database */
+    $feedback = send_message($db, $_POST);
+
+    /* Redirect to message get route (for that specific conversation) */
+    redirect(sprintf('/final_project_ddwt21/messages/?chat_id=%s&error_msg=%s',
+                $_POST['receiver_id'], json_encode($feedback)));
 });
 
 /* GET login */

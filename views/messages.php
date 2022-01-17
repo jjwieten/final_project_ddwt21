@@ -9,7 +9,7 @@ include_once 'header.php';
 
             <div class="row">
                 <h1 class="col-md-12"><?= $page_title ?></h1>
-
+                
                 <!-- Conversations overview -->
                 <?php echo $conversation_overview; ?>
 
@@ -20,8 +20,7 @@ include_once 'header.php';
                     echo '<div class="col-md-9"><p class="text-center">No conversation selected.</p></div>';
                 } ?>
 
-                <!-- Error message -->
-                <?php if (isset($error_msg)){echo $error_msg;} ?>
+
 
             </div>
         </div>
