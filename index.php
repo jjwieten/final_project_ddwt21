@@ -129,7 +129,7 @@ $router->post('/login/', function() use($db){
         redirect(sprintf('/final_project_ddwt21/login/?error_msg=%s',
                  json_encode($feedback)));
     } else {
-        /* Redirect to My Account page */
+        /* Redirect to home page */
         redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
                  json_encode($feedback)));
     }
@@ -188,5 +188,48 @@ $router->get('/logout/', function() use($navigation_template, $db){
 });
 
 
+$router->get('/owner/', function() use($navigation_template, $db){
+    if (!check_login()){
+        $feedback = 'You have to log in to be able to view this page';
+        /* Redirect to home page */
+        redirect(sprintf('/final_project_ddwt21/login/?error_msg=%s',
+            json_encode($feedback)));
+    }
+    else {
+        $role_array = check_role($db);
+        if ($role_array['role'] == '1') {
+            echo "Welcome owner";
+        }
+        else{
+            $feedback = 'You try to get in the wrong account page';
+            /* Redirect to home page */
+            redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                json_encode($feedback)));
+        }
+    };
+});
+
+$router->get('/tenant/', function() use($navigation_template, $db){
+    if (!check_login()){
+        $feedback = 'You have to log in to be able to view this page';
+        /* Redirect to home page */
+        redirect(sprintf('/final_project_ddwt21/login/?error_msg=%s',
+            json_encode($feedback)));
+    }
+    else {
+        $role_array = check_role($db);
+        if ($role_array['role'] == '2') {
+            echo "Welcome tenant";
+        }
+        else{
+            $feedback = 'You try to get in the wrong account page';
+            /* Redirect to home page */
+            redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                json_encode($feedback)));
+        }
+    };
+});
+
 /* Run the router */
 $router->run();
+
