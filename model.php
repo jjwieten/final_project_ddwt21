@@ -73,23 +73,42 @@ function get_breadcrumbs($breadcrumbs) {
  */
 function get_navigation($template, $active_id){
     $navigation_exp = '
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand">Find a room</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">';
-    foreach ($template as $id => $info) {
-        if ($id == $active_id){
-            $navigation_exp .= '<li class="nav-item active">';
-            $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
-        }else{
-            $navigation_exp .= '<li class="nav-item">';
-            $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+        <a class="navbar-brand" href="#">
+            <img src="https://placeholder.pics/svg/150x50/888888/EEE/Logo" alt="..." height="36">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">';
+    if (check_login()) {
+        $user_role = $_SESSION['user_role'];
+        foreach ($template as $id => $info) {
+            if ((($info['login'] == 'yes') or ($info['login'] == 'always')) and (($user_role == $info['role']) or ($info['role'] == 'everyone'))) {
+                if (($id == $active_id) and (($info['login'] == 'yes') or ($info['login'] == 'always'))){
+                    $navigation_exp .= '<li class="nav-item active">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }else{
+                    $navigation_exp .= '<li class="nav-item">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }
+            }
+            $navigation_exp .= '</li>';
         }
-
-        $navigation_exp .= '</li>';
+    } else {
+        foreach ($template as $id => $info) {
+            if (($info['login'] == 'no') or ($info['login'] == 'always')) {
+                if ($id == $active_id){
+                    $navigation_exp .= '<li class="nav-item active">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }else{
+                    $navigation_exp .= '<li class="nav-item">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }
+            }
+            $navigation_exp .= '</li>';
+        }
     }
     $navigation_exp .= '
     </ul>
@@ -410,6 +429,7 @@ function register_user($pdo, $form_data){
     /* Login user */
     session_start();
     $_SESSION['user_id'] = $user_id;
+    $_SESSION['user_role'] = $user_info['role'];
     return [
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully
@@ -459,6 +479,7 @@ function login_user($pdo, $form_data)
     } else {
         session_start();
         $_SESSION['user_id'] = $user_info['user_id'];
+        $_SESSION['user_role'] = $user_info['role'];
         return [
             'type' => 'success',
             'message' => sprintf('You were logged in successfully!')
@@ -480,13 +501,10 @@ function check_login(){
 function logout(){
     session_start();
     session_destroy();
-    $feedback = [
+    return [
         'type' => 'success',
         'message' => 'You were logged out successfully!'
     ];
-    redirect(sprintf('/final_project_ddwt21/overview/?error_msg=%s',
-        urlencode(json_encode($feedback))));
-
 }
 
 /**

@@ -1,3 +1,3 @@
-/* Template for profile overview */
-
 <?php
+include_once 'header.php';
+?>

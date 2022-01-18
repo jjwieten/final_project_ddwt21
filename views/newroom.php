@@ -1,3 +1,3 @@
-/* Page for room registration */
-
 <?php
+include_once 'header.php';
+?>

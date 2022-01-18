@@ -1,11 +1,11 @@
 <?php
 include_once 'header.php';
 ?>
-        <!-- Content -->
-        <div class="container">
-            <!-- Breadcrumbs -->
-            <div class="pd-15">&nbsp;</div>
-            <?= $breadcrumbs ?>
+<!-- Content -->
+<div class="container">
+    <!-- Breadcrumbs -->
+    <div class="pd-15">&nbsp</div>
+    <?= $breadcrumbs ?>
 
             <div class="row">
                 <h1 class="col-md-12"><?= $page_title ?></h1>

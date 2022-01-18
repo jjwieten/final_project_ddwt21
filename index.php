@@ -16,31 +16,51 @@ $router = new \Bramus\Router\Router();
 $navigation_template = Array(
     1 => Array(
         'name' => 'Home',
-        'url' => '/final_project_ddwt21/'
+        'url' => '/final_project_ddwt21/',
+        'login' => 'always',
+        'role' => 'everyone'
     ),
     2 => Array(
         'name' => 'Overview',
-        'url' => '/final_project_ddwt21/overview/'
+        'url' => '/final_project_ddwt21/overview/',
+        'login' => 'yes',
+        'role' => 'everyone'
     ),
     3 => Array(
         'name' => 'Register',
-        'url'   => '/final_project_ddwt21/register/'
+        'url'   => '/final_project_ddwt21/register/',
+        'login' => 'no',
+        'role' => 'everyone'
     ),
     4 => Array(
         'name' => 'Messages',
-        'url'   => '/final_project_ddwt21/messages/'
+        'url'   => '/final_project_ddwt21/messages/',
+        'login' => 'yes',
+        'role' => 'everyone'
+    ),
+    8 => Array(
+        'name' => 'Add Room',
+        'url'   => '/final_project_ddwt21/addroom/',
+        'login' => 'yes',
+        'role' => 1
     ),
     5 => Array(
         'name' => 'Login',
-        'url'   => '/final_project_ddwt21/login/'
+        'url'   => '/final_project_ddwt21/login/',
+        'login' => 'no',
+        'role' => 'everyone'
     ),
     6 => Array(
         'name' => 'My Account',
-        'url'   => '/final_project_ddwt21/myaccount/'
+        'url'   => '/final_project_ddwt21/myaccount/',
+        'login' => 'yes',
+        'role' => 'everyone'
     ),
     7 => Array(
-        'name' => 'Log out',
-        'url'   => '/final_project_ddwt21/log_out/'
+        'name' => 'Logout',
+        'url'   => '/final_project_ddwt21/logout/',
+        'login' => 'yes',
+        'role' => 'everyone'
     )
 );
 
@@ -198,10 +218,47 @@ $router->get('/login/', function() use($navigation_template, $db){
 });
 
 $router->get('/logout/', function() use($navigation_template, $db){
-    /* Page info */
-    logout();
+    /* Log out user */
+    $feedback = logout();
+
+    /* Redirect to landing page */
+    redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                json_encode($feedback)));
 });
 
+/* GET My account */
+$router->get('/myaccount/', function() use($navigation_template, $db){
+    /* Page info */
+    $page_title = 'My Account';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'My Account' => na('/final_project_ddwt21/myaccount/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 6);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('profile');
+});
+
+/* GET My account */
+$router->get('/addroom/', function() use($navigation_template, $db){
+    /* Page info */
+    $page_title = 'Add Room';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Add Room' => na('/final_project_ddwt21/addroom/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 8);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('newroom');
+});
 
 $router->get('/owner/', function() use($navigation_template, $db){
     if (!check_login()){
