@@ -211,6 +211,106 @@ function get_rooms_table($pdo){
 }
 
 /**
+ * Get array with all listed optins for the current user from the database
+ * @param PDO $pdo Database object
+ * @return array Associative array with all optins for the current user
+ */
+function get_optins($pdo, $current_user){
+    $stmt = $pdo->prepare('SELECT `opt-in_id`, tenant_id, `opt-ins`.room_id, room_name FROM `opt-ins`, rooms WHERE rooms.room_id = `opt-ins`.room_id AND tenant_id = ?');
+    $stmt->execute([$current_user]);
+    $optins = $stmt->fetchAll();
+
+    return $optins;
+}
+
+/**
+ * Get the tenant_id that belongs to a given optin_id from the database
+ * @param PDO $pdo Database object
+ * @param $optin_id
+ * @return int tenant_id
+ */
+function get_optin_tenant_id($pdo, $optin_id){
+    $stmt = $pdo->prepare('SELECT tenant_id FROM `opt-ins` WHERE `opt-in_id` = ?');
+    $stmt->execute([$optin_id]);
+    $tenant_info = $stmt->fetch();
+ 
+    return $tenant_info['tenant_id'];
+}
+
+
+/**
+ * Creates a Bootstrap table with a list of optins for the current user
+ * @param PDO $pdo Database object
+ * @return string
+ */
+function get_optins_table($pdo){
+    $current_user = get_user_id();
+    $optins = get_optins($pdo, $current_user);
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+        <th scope="col">Room name</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($optins as $key => $value){
+        $table_exp .= '
+        <tr>
+            <th scope="row">'.$value['room_name'].'</th>
+            <td><a href="/final_project_ddwt21/room/?room_id='.$value['room_id'].'" role="button" class="btn btn-primary">View room</a></td>
+            <td><form action="/final_project_ddwt21/optins/delete/" method="POST">
+            <input type="hidden" value="'.$value['opt-in_id'].'" name="optin_id">
+            <button type="submit" class="btn btn-danger">Cancel</button></form></td>
+        </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+}
+
+/**
+ * Removes an optin based on optin ID
+ * @param PDO $pdo Database object
+ * @param int $optin_in
+ * @return array
+ */
+function cancel_optin($pdo, $optin_id){
+    /* Get series info */
+    $optin_tenant_id = get_optin_tenant_id($pdo, $optin_id);
+
+    /* Check if current user is allowed to edit series */
+    if (get_user_id() != $optin_tenant_id){
+        return [
+            'type' => 'danger',
+            'message' => json_encode($optin_tenant_id)
+        ];
+    }
+
+    /* Delete optin */
+    $stmt = $pdo->prepare("DELETE FROM `opt-ins` WHERE `opt-in_id` = ?");
+    $stmt->execute([$optin_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => 'Your opt-in was successfully cancelled!'
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. Your opt-in was not cancelled.'
+        ];
+    }
+}
+
+/**
  * Get full name of user
  * @param user_id id from users table from database
  * @param PDO $pdo Database object
@@ -633,6 +733,18 @@ function check_role($pdo){
 function get_user_id(){
     if (isset($_SESSION['user_id'])){
         return $_SESSION['user_id'];
+    } else {
+        return False;
+    }
+}
+
+/**
+ * Get current user id
+ * @return bool current user id or False if not logged in
+ */
+function get_user_role(){
+    if (isset($_SESSION['user_role'])){
+        return $_SESSION['user_role'];
     } else {
         return False;
     }

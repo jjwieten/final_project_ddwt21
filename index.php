@@ -42,13 +42,6 @@ $navigation_template = Array(
         'role' => 'everyone',
         'align' => 'right'
     ),
-    8 => Array(
-        'name' => 'Add Room',
-        'url'   => '/final_project_ddwt21/addroom/',
-        'login' => 'yes',
-        'role' => 1,
-        'align' => 'left'
-    ),
     5 => Array(
         'name' => 'Login',
         'url'   => '/final_project_ddwt21/login/',
@@ -69,7 +62,21 @@ $navigation_template = Array(
         'login' => 'yes',
         'role' => 'everyone',
         'align' => 'right'
-    )
+    ),
+    8 => Array(
+        'name' => 'Add Room',
+        'url'   => '/final_project_ddwt21/addroom/',
+        'login' => 'yes',
+        'role' => 1,
+        'align' => 'left'
+    ),
+    9 => Array(
+        'name' => 'Opt-ins',
+        'url'   => '/final_project_ddwt21/optins/',
+        'login' => 'yes',
+        'role' => 2,
+        'align' => 'left'
+    ),
 );
 
 
@@ -203,6 +210,59 @@ $router->post('/messages/', function() use($db){
     redirect(sprintf('/final_project_ddwt21/messages/?chat_id=%s&error_msg=%s',
                 $_POST['receiver_id'], json_encode($feedback)));
 });
+
+/* GET optins for tenants */
+$router->get('/optins/', function() use($navigation_template, $db){
+    /* Check if logged in */
+    if (!check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    /* Check if user is a tenant */
+    if (get_user_role() != 2) {
+        $feedback = [
+            'type' => 'danger',
+            'message' => sprintf('You have to be logged in as a tenant to view that page.')
+        ];
+        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                json_encode($feedback)));
+    }
+
+    /* Page info */
+    $page_title = 'Opt-ins';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Messages' => na('/final_project_ddwt21/optins/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 9);
+
+    /* Page content */
+    $page_subtitle = 'Overview of opt-ins you initiated';
+    $page_content = 'Click on Cancel to cancel your opt-in. Or view the room information by clicking on View room.';
+    $left_content = get_optins_table($db);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('main');
+});
+
+/* POST route to delete optins */
+$router->post('/optins/delete/', function() use($db){
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    
+    /* Add message to database */
+    $optin_id = $_POST['optin_id'];
+    $feedback = cancel_optin($db, $optin_id);
+
+    /* Redirect to optin get route */
+    redirect(sprintf('/final_project_ddwt21/optins/?error_msg=%s',
+                json_encode($feedback)));
+});
+
 
 /* GET login */
 $router->get('/login/', function() use($navigation_template, $db){
