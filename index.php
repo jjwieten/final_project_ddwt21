@@ -18,49 +18,57 @@ $navigation_template = Array(
         'name' => 'Home',
         'url' => '/final_project_ddwt21/',
         'login' => 'always',
-        'role' => 'everyone'
+        'role' => 'everyone',
+        'align' => 'left'
     ),
     2 => Array(
         'name' => 'Overview',
         'url' => '/final_project_ddwt21/overview/',
         'login' => 'yes',
-        'role' => 'everyone'
+        'role' => 'everyone',
+        'align' => 'left'
     ),
     3 => Array(
         'name' => 'Register',
         'url'   => '/final_project_ddwt21/register/',
         'login' => 'no',
-        'role' => 'everyone'
+        'role' => 'everyone',
+        'align' => 'right'
     ),
     4 => Array(
         'name' => 'Messages',
         'url'   => '/final_project_ddwt21/messages/',
         'login' => 'yes',
-        'role' => 'everyone'
+        'role' => 'everyone',
+        'align' => 'right'
     ),
     8 => Array(
         'name' => 'Add Room',
         'url'   => '/final_project_ddwt21/addroom/',
         'login' => 'yes',
-        'role' => 1
+        'role' => 1,
+        'align' => 'left'
     ),
     5 => Array(
         'name' => 'Login',
         'url'   => '/final_project_ddwt21/login/',
         'login' => 'no',
-        'role' => 'everyone'
+        'role' => 'everyone',
+        'align' => 'right'
     ),
     6 => Array(
         'name' => 'My Account',
         'url'   => '/final_project_ddwt21/myaccount/',
         'login' => 'yes',
-        'role' => 'everyone'
+        'role' => 'everyone',
+        'align' => 'right'
     ),
     7 => Array(
         'name' => 'Logout',
         'url'   => '/final_project_ddwt21/logout/',
         'login' => 'yes',
-        'role' => 'everyone'
+        'role' => 'everyone',
+        'align' => 'right'
     )
 );
 

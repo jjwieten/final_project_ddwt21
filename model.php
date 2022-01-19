@@ -72,7 +72,9 @@ function get_breadcrumbs($breadcrumbs) {
  * @return string HTML code that represents the navigation
  */
 function get_navigation($template, $active_id){
+    $logged_in = check_login();
     $navigation_exp = '
+    <div class="container">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
         <a class="navbar-brand" href="#">
             <img src="https://placeholder.pics/svg/150x50/888888/EEE/Logo" alt="..." height="36">
@@ -82,10 +84,10 @@ function get_navigation($template, $active_id){
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">';
-    if (check_login()) {
+    if ($logged_in) {
         $user_role = $_SESSION['user_role'];
         foreach ($template as $id => $info) {
-            if ((($info['login'] == 'yes') or ($info['login'] == 'always')) and (($user_role == $info['role']) or ($info['role'] == 'everyone'))) {
+            if ((($info['login'] == 'yes') or ($info['login'] == 'always')) and (($user_role == $info['role']) or ($info['role'] == 'everyone')) and $info['align'] == 'left') {
                 if (($id == $active_id) and (($info['login'] == 'yes') or ($info['login'] == 'always'))){
                     $navigation_exp .= '<li class="nav-item active">';
                     $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
@@ -96,9 +98,11 @@ function get_navigation($template, $active_id){
             }
             $navigation_exp .= '</li>';
         }
-    } else {
+        $navigation_exp .= '
+        </ul>
+        <ul class="navbar-nav ml-auto">';
         foreach ($template as $id => $info) {
-            if (($info['login'] == 'no') or ($info['login'] == 'always')) {
+            if ((($info['login'] == 'yes') or ($info['login'] == 'always')) and (($user_role == $info['role']) or ($info['role'] == 'everyone')) and $info['align'] == 'right') {
                 if ($id == $active_id){
                     $navigation_exp .= '<li class="nav-item active">';
                     $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
@@ -109,11 +113,45 @@ function get_navigation($template, $active_id){
             }
             $navigation_exp .= '</li>';
         }
+        $navigation_exp .= '
+        </ul>
+        </div>';
+    }
+    if (!$logged_in) {
+        foreach ($template as $id => $info) {
+            if ((($info['login'] == 'no') or ($info['login'] == 'always')) and $info['align'] == 'left') {
+                if ($id == $active_id){
+                    $navigation_exp .= '<li class="nav-item active">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }else{
+                    $navigation_exp .= '<li class="nav-item">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }
+            }
+            $navigation_exp .= '</li>';
+        }
+        $navigation_exp .= '
+        </ul>
+        <ul class="navbar-nav ml-auto">';
+        foreach ($template as $id => $info) {
+            if (($info['login'] == 'no') or ($info['login'] == 'always') and $info['align'] == 'right') {
+                if ($id == $active_id){
+                    $navigation_exp .= '<li class="nav-item active">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }else{
+                    $navigation_exp .= '<li class="nav-item">';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                }
+            }
+            $navigation_exp .= '</li>';
+        }
+        $navigation_exp .= '
+        </ul>
+        </div>';
     }
     $navigation_exp .= '
-    </ul>
-    </div>
-    </nav>';
+    </nav>
+    </div>';
     return $navigation_exp;
 }
 
