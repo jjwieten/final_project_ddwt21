@@ -124,6 +124,9 @@ $router->get('/overview/', function() use($navigation_template, $db){
 
 /* GET register */
 $router->get('/register/', function() use($navigation_template, $db){
+    if ( check_login() ) {
+        redirect('/final_project_ddwt21/');
+    }
     /* Page info */
     $page_title = 'Register';
     $breadcrumbs = get_breadcrumbs([
@@ -369,6 +372,8 @@ $router->get('/tenant/', function() use($navigation_template, $db){
         }
     };
 });
+
+
 
 /* Run the router */
 $router->run();
