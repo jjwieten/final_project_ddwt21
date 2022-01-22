@@ -314,7 +314,32 @@ $router->get('/myaccount/', function() use($navigation_template, $db){
     include use_template('profile');
 });
 
-/* GET My account */
+/* GET single room */
+$router->get('/room/(\d+)', function($room_id) use($navigation_template, $db){
+    $room_info = get_room_info($db, $room_id);
+
+    /* Page info */
+    $page_title = $room_info['room_name'];
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        $room_info['room_name'] => na('/final_project_ddwt21/rooms/'.$room_id, True)
+    ]);
+    $navigation = get_navigation($navigation_template, 0);
+
+    /* Page content */
+    $user_role = get_user_role();
+    $owner_name = get_user_fullname($db, $room_info['owner_id']);
+    $page_content = 'Log into your account here';
+    $optins = get_optins_per_room_table($db, $room_id);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('room');
+});
+
+/* GET add room */
 $router->get('/addroom/', function() use($navigation_template, $db){
     /* Page info */
     $page_title = 'Add Room';
@@ -328,7 +353,77 @@ $router->get('/addroom/', function() use($navigation_template, $db){
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
     /* Choose Template */
+    $form_action = '/final_project_ddwt21/addroom/';
     include use_template('newroom');
+});
+
+/* POST route add room */
+$router->post('/addroom/', function() use($db){
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    
+    /* Add message to database */
+    $owner_id = get_user_id();
+    $feedback = add_room($db, $_POST);
+
+    /* Redirect to optin get route */
+    redirect(sprintf('/final_project_ddwt21/overview/?error_msg=%s',
+                json_encode($feedback)));
+});
+
+/* GET edit room */
+$router->get('/rooms/edit/', function() use($navigation_template, $db){
+    /* Page info */
+    $page_title = 'Edit Room';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Edit Room' => na('/final_project_ddwt21/rooms/edit/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 8);
+
+    /* Page content*/
+    $form_action = '/final_project_ddwt21/rooms/edit/';
+    $room_id = $_GET['room_id'];
+    $room_info = get_room_info($db, $room_id);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('newroom');
+});
+
+/* POST route to edit rooms */
+$router->post('/rooms/edit/', function() use($db){
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    
+    /* Add message to database */
+    $feedback = edit_room($db, $_POST);
+
+    /* Redirect to overview get route */
+    redirect(sprintf('/final_project_ddwt21/overview/?error_msg=%s',
+                json_encode($feedback)));
+});
+
+/* POST route to delete rooms */
+$router->post('/rooms/delete/', function() use($db){
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    
+    /* Add message to database */
+    $room_id = $_POST['room_id'];
+    $feedback = delete_room($db, $room_id);
+
+    /* Redirect to overview get route */
+    redirect(sprintf('/final_project_ddwt21/overview/?error_msg=%s',
+                json_encode($feedback)));
 });
 
 $router->get('/owner/', function() use($navigation_template, $db){

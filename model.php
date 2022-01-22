@@ -156,13 +156,234 @@ function get_navigation($template, $active_id){
 }
 
 /**
+ * Add room to the database
+ * @param PDO $pdo Database object
+ * @param array $room_info Associative array with series info
+ * @return array Associative array with key type and message
+ */
+function add_room($pdo, $room_info){
+    /* Check if all fields are set */
+    if (
+        empty($room_info['room_name']) or
+        empty($room_info['price']) or
+        empty($room_info['type']) or
+        empty($room_info['size']) or
+        empty($room_info['city']) or
+        empty($room_info['postcode']) or
+        empty($room_info['street']) or
+        empty($room_info['house_nr']) or
+        empty($room_info['description'])
+        ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+
+    /* Check if room name already exists */
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE room_name = ?');
+    $stmt->execute([$room_info['room_name']]);
+    $rooms = $stmt->rowCount();
+    if ($rooms){
+        return [
+            'type' => 'danger',
+            'message' => 'There is a room with this name already. Please choose another one.'
+        ];
+    }
+
+    /* Add Room */
+    $stmt = $pdo->prepare("INSERT INTO rooms (room_name, price, type, size, city, postcode, street, house_nr, description, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $room_info['room_name'],
+        $room_info['price'],
+        $room_info['type'],
+        $room_info['size'],
+        $room_info['city'],
+        $room_info['postcode'],
+        $room_info['street'],
+        $room_info['house_nr'],
+        $room_info['description'],
+        get_user_id()
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Your room '%s' was successfully added!", $room_info['room_name'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error, your room was not added. Please try again.'
+        ];
+    }
+}
+
+/**
+ * Removes a room based on room ID
+ * @param PDO $pdo Database object
+ * @param int $room_id
+ * @return array
+ */
+function delete_room($pdo, $room_id){
+    /* Get series info */
+    $owner_id = get_roomowner_id($pdo, $room_id);
+
+    /* Check if current user is allowed to remove this room */
+    if (get_user_id() != $owner_id){
+        return [
+            'type' => 'danger',
+            'message' => 'You are not authorized to delete this room.'
+        ];
+    }
+
+    /* Delete room */
+    $stmt = $pdo->prepare("DELETE FROM rooms WHERE room_id = ?");
+    $stmt->execute([$room_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => 'Your room was successfully deleted!'
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. Your room was not deleted.'
+        ];
+    }
+}
+
+/**
+ * Funciton to edit room
+ * @param PDO $pdo Database object
+ * @param int $room_id
+ * @return array
+ */
+function edit_room($pdo, $room_info){
+    $original_room_info = get_room_info($pdo, $room_info['room_id']);
+    $owner_id = $original_room_info['owner_id'];
+
+    /* Check if current user is allowed to edit this room */
+    if (get_user_id() != $owner_id){
+        return [
+            'type' => 'danger',
+            'message' => 'You are not authorized to edit this room.'
+        ];
+    }
+
+    /* Check if all fields are set */
+    if (
+        empty($room_info['room_name']) or
+        empty($room_info['price']) or
+        empty($room_info['type']) or
+        empty($room_info['size']) or
+        empty($room_info['city']) or
+        empty($room_info['postcode']) or
+        empty($room_info['street']) or
+        empty($room_info['house_nr']) or
+        empty($room_info['description'])
+        ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+
+    /* Check if room name already exists */
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE room_name = ? AND room_id != ?');
+    $stmt->execute([$room_info['room_name'], $room_info['room_id']]);
+    $rooms = $stmt->rowCount();
+    if ($rooms){
+        return [
+            'type' => 'danger',
+            'message' => 'There is a room with this name already. Please choose another one.'
+        ];
+    }
+
+    /* Add Room */
+    $stmt = $pdo->prepare("UPDATE rooms SET room_name = ?, price = ?, type = ?, size = ?, city = ?, postcode = ?, street = ?, house_nr = ?, description = ?, owner_id = ? WHERE room_id = ?");
+    $stmt->execute([
+        $room_info['room_name'],
+        $room_info['price'],
+        $room_info['type'],
+        $room_info['size'],
+        $room_info['city'],
+        $room_info['postcode'],
+        $room_info['street'],
+        $room_info['house_nr'],
+        $room_info['description'],
+        get_user_id(),
+        $room_info['room_id']
+    ]);
+    $edited = $stmt->rowCount();
+    if ($edited ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Your room '%s' was successfully edited!", $room_info['room_name'])
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error, your room was not edited. Please try again.'
+        ];
+    }
+}
+
+
+/**
+ * Get the owner_id that belongs to a given room_id from the database
+ * @param PDO $pdo Database object
+ * @param $room_id
+ * @return int owner_id
+ */
+function get_roomowner_id($pdo, $room_id){
+    $stmt = $pdo->prepare('SELECT owner_id FROM rooms WHERE room_id = ?');
+    $stmt->execute([$room_id]);
+    $owner_info = $stmt->fetch();
+ 
+    return $owner_info['owner_id'];
+}
+
+/**
+ * Generates an array with room information
+ * @param PDO $pdo Database object
+ * @param int $room_id ID of the room
+ * @return mixed
+ */
+function get_room_info($pdo, $room_id){
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE room_id = ?');
+    $stmt->execute([$room_id]);
+    $room_info = $stmt->fetch();
+    $room_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($room_info as $key => $value){
+        $room_info_exp[$key] = htmlspecialchars($value);
+    }
+    return $room_info_exp;
+}
+
+/**
  * Get array with all listed rooms from the database
+ * Contains all information from the rooms table
+ * When user role = owner, the nr of optins per room is also given
  * @param PDO $pdo Database object
  * @return array Associative array with all rooms
  */
 function get_rooms($pdo){
-    $stmt = $pdo->prepare('SELECT * FROM rooms');
-    $stmt->execute();
+    $user_role = get_user_role();
+    $user_id = get_user_id();
+    if ($user_role == 1) {
+        $stmt = $pdo->prepare('SELECT rooms.room_id, room_name, price, type, size, city, postcode, street, house_nr, description, owner_id, COUNT(tenant_id) AS optin_count FROM rooms, `opt-ins` WHERE rooms.room_id = `opt-ins`.room_id AND owner_id = ? GROUP BY rooms.room_id');
+        $stmt->execute([$user_id]);
+    } else {
+        $stmt = $pdo->prepare('SELECT * FROM rooms');
+        $stmt->execute();
+    }
     $rooms = $stmt->fetchAll();
     $rooms_exp = Array();
 
@@ -181,15 +402,27 @@ function get_rooms($pdo){
  * @return string
  */
 function get_rooms_table($pdo){
+    $user_id = get_user_id();
+    $user_role = get_user_role();
     $rooms = get_rooms($pdo);
     $table_exp = '
     <table class="table table-hover">
-    <thead
+    <thead class="thead-dark"
     <tr>
         <th scope="col">Room name</th>
+        <th scope="col">City</th>
+        <th scope="col">Street</th>
         <th scope="col">Type</th>
-        <th scope="col">Price</th>
+        <th scope="col">Size</th>
+        <th scope="col">Price</th>';
+    if ($user_role == 1) {
+        $table_exp .= '
+        <th scope="col">Nr of opt-ins</th>
         <th scope="col"></th>
+        <th scope="col"></th>';
+    }
+    $table_exp .= '
+    <th scope="col"></th>
     </tr>
     </thead>
     <tbody>';
@@ -197,9 +430,21 @@ function get_rooms_table($pdo){
         $table_exp .= '
         <tr>
             <th scope="row">'.$value['room_name'].'</th>
+            <td scope="row">'.$value['city'].'</td>
+            <td scope="row">'.$value['street'].'</td>
             <td scope="row">'.$value['type'].'</td>
-            <td scope="row">'.$value['price'].'</td>
-            <td><a href="/final_project_ddwt21/room/?room_id='.$value['room_id'].'" role="button" class="btn btn-primary">More info</a></td>
+            <td scope="row">'.$value['size'].' m<sup>2</sup></td>
+            <td scope="row">&euro;'.$value['price'].'</td>';
+        if ($user_role == 1) {
+        $table_exp .= '
+        <td scope="row">'.$value['room_id'].'</td>
+        <td><a href="/final_project_ddwt21/rooms/edit/?room_id='.$value['room_id'].'" role="button" class="btn btn-secondary btn-sm">Edit</a></td>
+        <td><form action="/final_project_ddwt21/rooms/delete/" method="POST">
+        <input type="hidden" value="'.$value['room_id'].'" name="room_id">
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button></form></td>';
+        }
+        $table_exp .= '
+        <td><a href="/final_project_ddwt21/room/'.$value['room_id'].'" role="button" class="btn btn-secondary btn-sm">More information</a></td>
         </tr>
         ';
     }
@@ -215,12 +460,62 @@ function get_rooms_table($pdo){
  * @param PDO $pdo Database object
  * @return array Associative array with all optins for the current user
  */
-function get_optins($pdo, $current_user){
+function get_optins_user($pdo, $current_user){
     $stmt = $pdo->prepare('SELECT `opt-in_id`, tenant_id, `opt-ins`.room_id, room_name FROM `opt-ins`, rooms WHERE rooms.room_id = `opt-ins`.room_id AND tenant_id = ?');
     $stmt->execute([$current_user]);
     $optins = $stmt->fetchAll();
 
     return $optins;
+}
+
+/**
+ * Get array with all listed optins for a specific room from the database
+ * Also included is the name of the tenant
+ * @param PDO $pdo Database object
+ * @return array Associative array with all optins for that room
+ */
+function get_optins_room($pdo, $room_id){
+    $stmt = $pdo->prepare('SELECT `opt-in_id`, tenant_id, `opt-ins`.room_id, CONCAT(firstname, " ", lastname) AS username FROM `opt-ins`, users WHERE users.user_id = `opt-ins`.tenant_id AND room_id = ?');
+    $stmt->execute([$room_id]);
+    $optins = $stmt->fetchAll();
+    $optins_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($optins as $key => $value){
+        foreach ($value as $inner_key => $inner_value) {
+            $optins_exp[$key][$inner_key] = htmlspecialchars($inner_value);
+        }
+    }
+    return $optins_exp;
+}
+
+/**
+ * Creates a Bootstrap table with a list of optins for the current user
+ * @param PDO $pdo Database object
+ * @return string
+ */
+function get_optins_per_room_table($pdo, $room_id){
+    $optins = get_optins_room($pdo, $room_id);
+    $table_exp = '
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" colspan="2">Opt-ins</th>
+                </tr>
+            </thead>
+            <tbody>';
+    foreach($optins as $key => $value){
+        $table_exp .= '
+        <tr>
+            <th>'.$value['username'].'</th>
+            <td><a href="#" role="button" class="btn btn-secondary">Send message</a></td>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
 }
 
 /**
@@ -245,7 +540,7 @@ function get_optin_tenant_id($pdo, $optin_id){
  */
 function get_optins_table($pdo){
     $current_user = get_user_id();
-    $optins = get_optins($pdo, $current_user);
+    $optins = get_optins_user($pdo, $current_user);
     $table_exp = '
     <table class="table table-hover">
     <thead
@@ -281,14 +576,14 @@ function get_optins_table($pdo){
  * @return array
  */
 function cancel_optin($pdo, $optin_id){
-    /* Get series info */
+    /* Get optin info */
     $optin_tenant_id = get_optin_tenant_id($pdo, $optin_id);
 
-    /* Check if current user is allowed to edit series */
+    /* Check if current user is allowed to cancel this opt-in */
     if (get_user_id() != $optin_tenant_id){
         return [
             'type' => 'danger',
-            'message' => json_encode($optin_tenant_id)
+            'message' => 'You are not authorized to cancel this opt-in.'
         ];
     }
 
