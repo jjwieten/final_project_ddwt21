@@ -9,8 +9,8 @@
     
             <div class="row">
 
-                <!-- Left column -->
-                <div class="col-md-8">
+                <!-- Main content -->
+                <div class="col-md-12">
                     <!-- Error message -->
                     <?php if (isset($error_msg)){echo $error_msg;} ?>
 
@@ -19,14 +19,6 @@
                     <p><?= $page_content ?></p>
                     <?php if(isset($left_content)){echo $left_content;} ?>
                 </div>
-
-                <!-- Right column -->
-                <div class="col-md-4">
-
-                    <?php include $right_column ?>
-
-                </div>
-
             </div>
         </div>
 
