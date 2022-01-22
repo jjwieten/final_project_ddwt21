@@ -250,6 +250,16 @@ $router->get('/optins/', function() use($navigation_template, $db){
     include use_template('main');
 });
 
+/* POST add optin */
+$router->post('/optins/add', function() use($db){
+    /* Login user */
+    $feedback = add_optin($db, $_POST['room_id']);
+    
+    redirect(sprintf('/final_project_ddwt21/optins/?error_msg=%s',
+                 json_encode($feedback)));
+
+});
+
 /* POST route to delete optins */
 $router->post('/optins/delete/', function() use($db){
     /* Check if logged in */
@@ -330,7 +340,10 @@ $router->get('/room/(\d+)', function($room_id) use($navigation_template, $db){
     $user_role = get_user_role();
     $owner_name = get_user_fullname($db, $room_info['owner_id']);
     $page_content = 'Log into your account here';
-    $optins = get_optins_per_room_table($db, $room_id);
+    if ($user_role == 1) {
+        $optins = get_optins_per_room_table($db, $room_id);
+    }
+    
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }

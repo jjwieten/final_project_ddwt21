@@ -38,10 +38,12 @@
                                 <th scope="row">Description</th>
                                 <td><?= $room_info['description'] ?></td>
                             </tr>
+                            <?php if ($user_role == 2) { ?>
                             <tr>
                                 <th scope="row">Owner</th>
                                 <td><?= $owner_name ?></td>
                             </tr>
+                            <?php } ?>
                             </tbody>
                         </table>
                         <?php if ($user_role == 1) { ?>
@@ -53,6 +55,22 @@
                                     <form action="/final_project_ddwt21/rooms/delete" method="POST">
                                         <input type="hidden" value="<?= $room_info['room_id'] ?>" name="room_id">
                                         <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php } ?>
+                        <?php if ($user_role == 2) { ?>
+                            <div class="row">
+                            <div class="col-sm-2">
+                                    <form action="/final_project_ddwt21/optins/add" method="POST">
+                                        <input type="hidden" value="<?= $room_info['room_id'] ?>" name="room_id">
+                                        <button type="submit" class="btn btn-info">Opt-in</button>
+                                    </form>
+                                </div>
+                                <div class="col-sm-3">
+                                    <form action="#" method="POST">
+                                        <input type="hidden" value="<?= $room_info['owner_id'] ?>" name="owner_id">
+                                        <button type="submit" class="btn btn-secondary">Message owner</button>
                                     </form>
                                 </div>
                             </div>

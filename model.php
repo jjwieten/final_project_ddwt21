@@ -162,6 +162,14 @@ function get_navigation($template, $active_id){
  * @return array Associative array with key type and message
  */
 function add_room($pdo, $room_info){
+    /* Check if current user is allowed to add a room */
+    if (get_user_role() != 1){
+        return [
+            'type' => 'danger',
+            'message' => 'You are not authorized to add a room.'
+        ];
+    }
+
     /* Check if all fields are set */
     if (
         empty($room_info['room_name']) or
@@ -378,7 +386,7 @@ function get_rooms($pdo){
     $user_role = get_user_role();
     $user_id = get_user_id();
     if ($user_role == 1) {
-        $stmt = $pdo->prepare('SELECT rooms.room_id, room_name, price, type, size, city, postcode, street, house_nr, description, owner_id, COUNT(tenant_id) AS optin_count FROM rooms, `opt-ins` WHERE rooms.room_id = `opt-ins`.room_id AND owner_id = ? GROUP BY rooms.room_id');
+        $stmt = $pdo->prepare('SELECT rooms.room_id, room_name, price, type, size, city, postcode, street, house_nr, description, owner_id, COUNT(tenant_id) AS optin_count FROM rooms LEFT JOIN `opt-ins` ON rooms.room_id = `opt-ins`.room_id WHERE owner_id = ? GROUP BY rooms.room_id');
         $stmt->execute([$user_id]);
     } else {
         $stmt = $pdo->prepare('SELECT * FROM rooms');
@@ -437,7 +445,7 @@ function get_rooms_table($pdo){
             <td scope="row">&euro;'.$value['price'].'</td>';
         if ($user_role == 1) {
         $table_exp .= '
-        <td scope="row">'.$value['room_id'].'</td>
+        <td scope="row">'.$value['optin_count'].'</td>
         <td><a href="/final_project_ddwt21/rooms/edit/?room_id='.$value['room_id'].'" role="button" class="btn btn-secondary btn-sm">Edit</a></td>
         <td><form action="/final_project_ddwt21/rooms/delete/" method="POST">
         <input type="hidden" value="'.$value['room_id'].'" name="room_id">
@@ -453,6 +461,54 @@ function get_rooms_table($pdo){
     </table>
     ';
     return $table_exp;
+}
+
+/**
+ * Add room to the database
+ * @param PDO $pdo Database object
+ * @param int $room_id
+ * @return array Associative array with key type and message
+ */
+function add_optin($pdo, $room_id){
+    $tenant_id = get_user_id();
+    /* Check if current user is allowed to add an optin */
+    if (get_user_role() != 2){
+        return [
+            'type' => 'danger',
+            'message' => json_encode(get_user_role())
+        ];
+    }
+
+    /* Check if optin already exists */
+    $stmt = $pdo->prepare('SELECT * FROM `opt-ins` WHERE room_id = ? AND tenant_id = ?');
+    $stmt->execute([$room_id, $tenant_id]);
+    $rooms = $stmt->rowCount();
+    if ($rooms){
+        return [
+            'type' => 'danger',
+            'message' => 'You already have an opt-in for this room.'
+        ];
+    }
+
+    /* Add Room */
+    $stmt = $pdo->prepare("INSERT INTO `opt-ins` (tenant_id, room_id) VALUES (?, ?)");
+    $stmt->execute([
+        $tenant_id,
+        $room_id
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted ==  1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Your opt-in was successfully registered!")
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error, your opt-in was not registered. Please try again.'
+        ];
+    }
 }
 
 /**
@@ -555,7 +611,7 @@ function get_optins_table($pdo){
         $table_exp .= '
         <tr>
             <th scope="row">'.$value['room_name'].'</th>
-            <td><a href="/final_project_ddwt21/room/?room_id='.$value['room_id'].'" role="button" class="btn btn-primary">View room</a></td>
+            <td><a href="/final_project_ddwt21/room/'.$value['room_id'].'" role="button" class="btn btn-primary">View room</a></td>
             <td><form action="/final_project_ddwt21/optins/delete/" method="POST">
             <input type="hidden" value="'.$value['opt-in_id'].'" name="optin_id">
             <button type="submit" class="btn btn-danger">Cancel</button></form></td>
@@ -1026,6 +1082,9 @@ function check_role($pdo){
  * @return bool current user id or False if not logged in
  */
 function get_user_id(){
+    if(!isset($_SESSION)) { 
+        session_start(); 
+    }
     if (isset($_SESSION['user_id'])){
         return $_SESSION['user_id'];
     } else {
@@ -1038,6 +1097,9 @@ function get_user_id(){
  * @return bool current user id or False if not logged in
  */
 function get_user_role(){
+    if(!isset($_SESSION)) { 
+        session_start(); 
+    }
     if (isset($_SESSION['user_role'])){
         return $_SESSION['user_role'];
     } else {
