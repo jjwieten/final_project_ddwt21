@@ -491,6 +491,41 @@ $router->get('/tenant/', function() use($navigation_template, $db){
 
 
 
+$router->get('/termsofuse/', function() use($navigation_template){
+    /* Page info */
+    $page_title = 'Home';
+
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Edit Room' => na('/final_project_ddwt21/termsofuse/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 0);
+
+    /* Page content */
+    $page_subtitle = 'Our terms and conditions';
+
+    /* Include Template */
+    include use_template('termsofuse');
+});
+
+$router->get('/privacy/', function() use($navigation_template){
+    /* Page info */
+    $page_title = 'Home';
+
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Edit Room' => na('/final_project_ddwt21/privacy/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 0);
+
+    /* Page content */
+    $page_subtitle = 'Our privacy policy';
+
+    /* Include Template */
+    include use_template('privacy');
+});
+
+
 /* Run the router */
 $router->run();
 

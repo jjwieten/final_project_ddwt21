@@ -24,8 +24,8 @@
         <div class="footer-bottom">
             <ul id='horizontal-list';>
                 <li>Copyright</li>
-                <li><a href="">Home</a></li>
-                <li><a href="">About</a></li>
+                <li><a href="/final_project_ddwt21/termsofuse/">Terms of use</a></li>
+                <li><a href="/final_project_ddwt21/privacy/">Privacy</a></li>
                 <li><a href="">Contact</a></li>
             </ul>
         </div>
