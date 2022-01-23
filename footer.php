@@ -26,7 +26,6 @@
                 <li>Copyright</li>
                 <li><a href="/final_project_ddwt21/termsofuse/">Terms of use</a></li>
                 <li><a href="/final_project_ddwt21/privacy/">Privacy</a></li>
-                <li><a href="">Contact</a></li>
             </ul>
         </div>
     </div>

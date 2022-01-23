@@ -493,7 +493,7 @@ $router->get('/tenant/', function() use($navigation_template, $db){
 
 $router->get('/termsofuse/', function() use($navigation_template){
     /* Page info */
-    $page_title = 'Home';
+    $page_title = 'Terms of use';
 
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
@@ -510,7 +510,7 @@ $router->get('/termsofuse/', function() use($navigation_template){
 
 $router->get('/privacy/', function() use($navigation_template){
     /* Page info */
-    $page_title = 'Home';
+    $page_title = 'Privacy';
 
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
@@ -524,6 +524,24 @@ $router->get('/privacy/', function() use($navigation_template){
     /* Include Template */
     include use_template('privacy');
 });
+
+$router->get('/mission/', function() use($navigation_template){
+    /* Page info */
+    $page_title = 'Mission statement';
+
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Edit Room' => na('/final_project_ddwt21/mission/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 11);
+
+    /* Page content */
+    $page_subtitle = 'Our mission';
+
+    /* Include Template */
+    include use_template('mission');
+});
+
 
 
 /* Run the router */
