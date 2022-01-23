@@ -50,8 +50,8 @@ $navigation_template = Array(
         'align' => 'right'
     ),
     6 => Array(
-        'name' => 'My Account',
-        'url'   => '/final_project_ddwt21/myaccount/',
+        'name' => 'My Profile',
+        'url'   => '/final_project_ddwt21/user/'.get_user_id(),
         'login' => 'yes',
         'role' => 'everyone',
         'align' => 'right'
@@ -139,6 +139,7 @@ $router->get('/register/', function() use($navigation_template, $db){
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
     /* Choose Template */
+    $form_action = '/final_project_ddwt21/register/';
     include use_template('register');
 });
 
@@ -213,6 +214,10 @@ $router->post('/messages/', function() use($db){
     if(isset($_POST['room_page'])){
         redirect(sprintf('/final_project_ddwt21/room/%s/?error_msg=%s',
                 $_POST['room_page'], json_encode($feedback)));
+    }
+    if(isset($_POST['user_page'])){
+        redirect(sprintf('/final_project_ddwt21/user/%s/?error_msg=%s',
+                $_POST['user_page'], json_encode($feedback)));
     }
     redirect(sprintf('/final_project_ddwt21/messages/?chat_id=%s&error_msg=%s',
                 $_POST['receiver_id'], json_encode($feedback)));
@@ -311,21 +316,86 @@ $router->get('/logout/', function() use($navigation_template, $db){
                 json_encode($feedback)));
 });
 
-/* GET My account */
-$router->get('/myaccount/', function() use($navigation_template, $db){
+/* GET user profile */
+$router->get('/user/(\d+)', function($user_id) use($navigation_template, $db){
+    $user_info = get_user_info($db, $user_id);
+    $own_profile = (get_user_id() == $user_id);
     /* Page info */
-    $page_title = 'My Account';
+    $page_title = 'Profile of '.$user_info['firstname'].' '.$user_info['lastname'];
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
-        'My Account' => na('/final_project_ddwt21/myaccount/', True)
+        'Profile of '.$user_info['firstname'].' '.$user_info['lastname'] => na('/final_project_ddwt21/user/'.$user_id, True)
     ]);
-    $navigation = get_navigation($navigation_template, 6);
+    if ($own_profile) {
+        $navigation = get_navigation($navigation_template, 6);
+    } else
+        $navigation = get_navigation($navigation_template, 0);
+
+    /* Page content */
+    if (isset($_GET['message'])) {
+        $chat_id = $_GET['message'];
+        $receiver_name = get_user_fullname($db, $chat_id);
+    }
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
     /* Choose Template */
     include use_template('profile');
+});
+
+/* GET edit user profile */
+$router->get('/user/edit/', function() use($navigation_template, $db){
+    /* Page info */
+    $page_title = 'Edit profile information';
+    $breadcrumbs = get_breadcrumbs([
+        'Home' => na('/final_project_ddwt21/', False),
+        'Edit profile information' => na('/final_project_ddwt21/user/edit/', True)
+    ]);
+    $navigation = get_navigation($navigation_template, 6);
+
+    /* Page content*/
+    $form_action = '/final_project_ddwt21/user/edit/';
+    $user_id = $_GET['user_id'];
+    $user_info = get_user_info($db, $user_id);
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
+
+    /* Choose Template */
+    include use_template('register');
+});
+
+/* POST route to edit user information */
+$router->post('/user/edit/', function() use($db){
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    
+    /* Add new info to database */
+    $user_info = $_POST;
+    $feedback = edit_user($db, $user_info);
+
+    /* Redirect to overview get route */
+    redirect(sprintf('/final_project_ddwt21/user/%s/?error_msg=%s',
+                $user_info['user_id'], json_encode($feedback)));
+});
+
+/* POST route to delete account */
+$router->post('/user/delete/', function() use($db){
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
+    
+    /* Add message to database */
+    $user_id = $_POST['user_id'];
+    $feedback = delete_user($db, $user_id);
+
+    /* Redirect to landing page get route */
+    redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                json_encode($feedback)));
 });
 
 /* GET single room */
