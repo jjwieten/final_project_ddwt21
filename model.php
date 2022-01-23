@@ -564,7 +564,7 @@ function get_optins_per_room_table($pdo, $room_id){
         $table_exp .= '
         <tr>
             <th>'.$value['username'].'</th>
-            <td><a href="#" role="button" class="btn btn-secondary">Send message</a></td>
+            <td><a href="/final_project_ddwt21/room/'.$room_id.'/?message='.$value['tenant_id'].'" role="button" class="btn btn-secondary">Send message</a></td>
         ';
     }
     $table_exp .= '
@@ -918,7 +918,7 @@ function register_user($pdo, $form_data){
     /* Login user */
     session_start();
     $_SESSION['user_id'] = $user_id;
-    $_SESSION['user_role'] = $user_info['role'];
+    $_SESSION['user_role'] = $form_data['account_type_id'];
     return [
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully

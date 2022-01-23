@@ -209,7 +209,11 @@ $router->post('/messages/', function() use($db){
     /* Add message to database */
     $feedback = send_message($db, $_POST);
 
-    /* Redirect to message get route (for that specific conversation) */
+    /* Redirect to messages if already on a conversation page, else show feedback on room or user page */
+    if(isset($_POST['room_page'])){
+        redirect(sprintf('/final_project_ddwt21/room/%s/?error_msg=%s',
+                $_POST['room_page'], json_encode($feedback)));
+    }
     redirect(sprintf('/final_project_ddwt21/messages/?chat_id=%s&error_msg=%s',
                 $_POST['receiver_id'], json_encode($feedback)));
 });
@@ -337,13 +341,17 @@ $router->get('/room/(\d+)', function($room_id) use($navigation_template, $db){
     $navigation = get_navigation($navigation_template, 0);
 
     /* Page content */
+    if (isset($_GET['message'])) {
+        $chat_id = $_GET['message'];
+        $receiver_name = get_user_fullname($db, $chat_id);
+    }
     $user_role = get_user_role();
     $owner_name = get_user_fullname($db, $room_info['owner_id']);
     $page_content = 'Log into your account here';
     if ($user_role == 1) {
         $optins = get_optins_per_room_table($db, $room_id);
     }
-    
+
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
@@ -377,11 +385,11 @@ $router->post('/addroom/', function() use($db){
         redirect('/final_project_ddwt21/login/');
     }
     
-    /* Add message to database */
+    /* Add room to database */
     $owner_id = get_user_id();
     $feedback = add_room($db, $_POST);
 
-    /* Redirect to optin get route */
+    /* Redirect to room overview get route */
     redirect(sprintf('/final_project_ddwt21/overview/?error_msg=%s',
                 json_encode($feedback)));
 });
@@ -415,7 +423,7 @@ $router->post('/rooms/edit/', function() use($db){
         redirect('/final_project_ddwt21/login/');
     }
     
-    /* Add message to database */
+    /* Add new info to database */
     $feedback = edit_room($db, $_POST);
 
     /* Redirect to overview get route */

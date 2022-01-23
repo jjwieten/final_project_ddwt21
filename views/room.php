@@ -50,8 +50,6 @@
                             <div class="row">
                                 <div class="col-sm-2">
                                     <a href="/final_project_ddwt21/rooms/edit/?room_id=<?= $room_info['room_id'] ?>" role="button" class="btn btn-secondary">Edit</a>
-                                </div>
-                                <div class="col-sm-2">
                                     <form action="/final_project_ddwt21/rooms/delete" method="POST">
                                         <input type="hidden" value="<?= $room_info['room_id'] ?>" name="room_id">
                                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -67,17 +65,31 @@
                                         <button type="submit" class="btn btn-info">Opt-in</button>
                                     </form>
                                 </div>
-                                <div class="col-sm-3">
-                                    <form action="#" method="POST">
-                                        <input type="hidden" value="<?= $room_info['owner_id'] ?>" name="owner_id">
-                                        <button type="submit" class="btn btn-secondary">Message owner</button>
-                                    </form>
-                                </div>
+                                <a href="/final_project_ddwt21/room/<?= $room_info['room_id'] ?>/?message=<?= $room_info['owner_id'] ?>" role="button" class="btn btn-secondary">Message owner</a>
                             </div>
                         <?php } ?>
                         <div class="pd-15">&nbsp;</div>
-
-                        <?php if (isset($optins)) {echo $optins;}?>
+                        
+                        <?php if (isset($chat_id)) {
+                            echo '
+                                <div class="col-md-12">
+                                <div class="pd-15">&nbsp;</div>
+                                <h5>Send a message to '.$receiver_name.'</h5>
+                                    <form action="/final_project_ddwt21/messages/" method="POST">
+                                        <div class="form-group">
+                                            <textarea class="form-control" rows="5" id="content" name="content" placeholder="Type your message here..."></textarea>
+                                        </div>
+                                        <input type="hidden" id="receiver_id" name="receiver_id" value='.$chat_id.'>
+                                        <input type="hidden" id="room_page" name="room_page" value='.$room_info['room_id'].'>
+                                        <input type="submit" value="Send message" class="btn btn-secondary">
+                                        <a href="/final_project_ddwt21/room/'.$room_info["room_id"].'" role="button" class="btn btn-danger">Cancel</a>
+                                    </form>
+                                    
+                                </div>';
+                        } else
+                        if (isset($optins)) {echo $optins;} ?>
+                        
+                        
         </div>
 
     </div>
