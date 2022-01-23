@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Dec 16, 2021 at 01:40 PM
--- Server version: 5.7.24
--- PHP Version: 7.4.16
+-- Host: localhost
+-- Gegenereerd op: 22 jan 2022 om 16:45
+-- Serverversie: 5.7.24
+-- PHP-versie: 8.0.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -26,7 +26,7 @@ USE `final_project`;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `messages`
+-- Tabelstructuur voor tabel `messages`
 --
 
 CREATE TABLE `messages` (
@@ -40,7 +40,7 @@ CREATE TABLE `messages` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `opt-ins`
+-- Tabelstructuur voor tabel `opt-ins`
 --
 
 CREATE TABLE `opt-ins` (
@@ -52,7 +52,7 @@ CREATE TABLE `opt-ins` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rooms`
+-- Tabelstructuur voor tabel `rooms`
 --
 
 CREATE TABLE `rooms` (
@@ -72,7 +72,7 @@ CREATE TABLE `rooms` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Tabelstructuur voor tabel `users`
 --
 
 CREATE TABLE `users` (
@@ -91,11 +91,11 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Indexes for dumped tables
+-- Indexen voor geëxporteerde tabellen
 --
 
 --
--- Indexes for table `messages`
+-- Indexen voor tabel `messages`
 --
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`message_id`),
@@ -103,7 +103,7 @@ ALTER TABLE `messages`
   ADD KEY `sender_id` (`sender_id`);
 
 --
--- Indexes for table `opt-ins`
+-- Indexen voor tabel `opt-ins`
 --
 ALTER TABLE `opt-ins`
   ADD PRIMARY KEY (`opt-in_id`),
@@ -111,69 +111,69 @@ ALTER TABLE `opt-ins`
   ADD KEY `opt-ins_room_id` (`room_id`);
 
 --
--- Indexes for table `rooms`
+-- Indexen voor tabel `rooms`
 --
 ALTER TABLE `rooms`
   ADD PRIMARY KEY (`room_id`),
   ADD KEY `owner_id` (`owner_id`);
 
 --
--- Indexes for table `users`
+-- Indexen voor tabel `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT voor geëxporteerde tabellen
 --
 
 --
--- AUTO_INCREMENT for table `messages`
+-- AUTO_INCREMENT voor een tabel `messages`
 --
 ALTER TABLE `messages`
   MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `opt-ins`
+-- AUTO_INCREMENT voor een tabel `opt-ins`
 --
 ALTER TABLE `opt-ins`
   MODIFY `opt-in_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `rooms`
+-- AUTO_INCREMENT voor een tabel `rooms`
 --
 ALTER TABLE `rooms`
   MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT voor een tabel `users`
 --
 ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- Beperkingen voor geëxporteerde tabellen
 --
 
 --
--- Constraints for table `messages`
+-- Beperkingen voor tabel `messages`
 --
 ALTER TABLE `messages`
-  ADD CONSTRAINT `receiver_id` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `sender_id` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `receiver_id` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sender_id` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `opt-ins`
+-- Beperkingen voor tabel `opt-ins`
 --
 ALTER TABLE `opt-ins`
-  ADD CONSTRAINT `opt-ins_room_id` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`),
-  ADD CONSTRAINT `opt-ins_user_id` FOREIGN KEY (`tenant_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `opt-ins_room_id` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`room_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `opt-ins_user_id` FOREIGN KEY (`tenant_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `rooms`
+-- Beperkingen voor tabel `rooms`
 --
 ALTER TABLE `rooms`
-  ADD CONSTRAINT `rooms_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `rooms_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
