@@ -222,6 +222,10 @@ Calibri;color:#595959;mso-themecolor:text1;mso-themetint:166;">In order to resol
     These terms of use were created using Termly's <a style="color: rgb(48, 48, 241) !important;" href="https://termly.io/products/terms-and-conditions-generator">Terms and Conditions Generator</a>.
 </div>
 
+<?php
+include_once 'footer.php';
+?>
+
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

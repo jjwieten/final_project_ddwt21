@@ -1,6 +1,7 @@
 <?php
 include_once 'header.php';
 ?>
+<div class="container">
 <h2>Privacy Policy</h2>
 <p>Your privacy is important to us. It is Roomnet&#39;s policy to respect your privacy and comply with any applicable law and regulation regarding any personal information we may collect about you, including across our website, <a href="https://www.roomnet.nl">https://www.roomnet.nl</a>, and other sites we own and operate. </p>
 <p>This policy is effective as of 23 January 2022 and was last updated on 23 January 2022. </p>
@@ -58,6 +59,13 @@ include_once 'header.php';
 <p>For any questions or concerns regarding your privacy, you may contact us using the following details: </p>
 <p>privacy<br />
     privacy@roomnet.nl </p>
+
+</div>
+
+<?php
+include_once 'footer.php';
+?>
+
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

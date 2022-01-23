@@ -24,7 +24,9 @@ include_once 'header.php';
 
             </div>
         </div>
-
+        <?php
+        include_once 'footer.php';
+        ?>
 
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -74,7 +74,7 @@ function get_breadcrumbs($breadcrumbs) {
 function get_navigation($template, $active_id){
     $logged_in = check_login();
     $navigation_exp = '
-    <div class="container">
+    <div class="container" id="header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
         <a class="navbar-brand" href="#">
             <img src="https://i.imgur.com/KF09FC9.png" alt="Roomnet logo" height="36">
