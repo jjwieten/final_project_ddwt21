@@ -71,15 +71,18 @@
                     echo '<input type="hidden" name="user_id" value="'. $user_id.'">';
                 } ?>
 
-                <?php if (!isset($user_info)){ echo
-                '<button type="submit" class="btn btn-primary">Registreer nu</button>';} else{
+                <?php if (!isset($user_info)){
+                    echo
+                '<button type="submit" class="btn btn-primary">Registreer nu</button>';
+                    echo
+                    '<p color="blue">When you register, you agree to our
+                    <a href="/final_project_ddwt21/termsofuse/">Terms of use</a> and our <a href="/final_project_ddwt21/privacy/">Privacy policy</a></p>';
+                }
+                else{
                     echo
                     '<button type="submit" class="btn btn-warning">Edit</button>';
-                } ?>
+                             } ?>
             </form>
-            <p color="blue">When you register, you agree to our
-                <a href="/final_project_ddwt21/termsofuse/">Terms of use</a> and our <a href="/final_project_ddwt21/privacy/">Privacy policy</a></p>
-
         </div>
 
     </div>

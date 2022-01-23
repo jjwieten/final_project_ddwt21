@@ -349,6 +349,7 @@ $router->get('/user/(\d+)', function($user_id) use($navigation_template, $db){
 $router->get('/user/edit/', function() use($navigation_template, $db){
     /* Page info */
     $page_title = 'Edit profile information';
+    $page_subtitle = 'Change your profile information here';
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
         'Edit profile information' => na('/final_project_ddwt21/user/edit/', True)
