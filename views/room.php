@@ -65,6 +65,7 @@
                                         <button type="submit" class="btn btn-info">Opt-in</button>
                                     </form>
                                 </div>
+                                <td><a href="/final_project_ddwt21/user/<?= $room_info['owner_id'] ?>" role="button" class="btn btn-secondary">View owner profile</a></td>
                                 <a href="/final_project_ddwt21/room/<?= $room_info['room_id'] ?>/?message=<?= $room_info['owner_id'] ?>" role="button" class="btn btn-secondary">Message owner</a>
                             </div>
                         <?php } ?>

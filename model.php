@@ -556,7 +556,7 @@ function get_optins_per_room_table($pdo, $room_id){
         <table class="table table-hover">
             <thead class="thead-light">
                 <tr>
-                    <th scope="col" colspan="2">Opt-ins</th>
+                    <th scope="col" colspan="3">Opt-ins</th>
                 </tr>
             </thead>
             <tbody>';
@@ -564,6 +564,7 @@ function get_optins_per_room_table($pdo, $room_id){
         $table_exp .= '
         <tr>
             <th>'.$value['username'].'</th>
+            <td><a href="/final_project_ddwt21/user/'.$value['tenant_id'].'/" role="button" class="btn btn-secondary">View profile</a></td>
             <td><a href="/final_project_ddwt21/room/'.$room_id.'/?message='.$value['tenant_id'].'" role="button" class="btn btn-secondary">Send message</a></td>
         ';
     }
@@ -1104,5 +1105,133 @@ function get_user_role(){
         return $_SESSION['user_role'];
     } else {
         return False;
+    }
+}
+
+/**
+ * Generates an array with user information
+ * @param PDO $pdo Database object
+ * @param int $user_id ID of the user
+ * @return mixed
+ */
+function get_user_info($pdo, $user_id){
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE user_id = ?');
+    $stmt->execute([$user_id]);
+    $user_info = $stmt->fetch();
+    $user_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($user_info as $key => $value){
+        $user_info_exp[$key] = htmlspecialchars($value);
+    }
+    return $user_info_exp;
+}
+
+/**
+ * Funciton to edit user
+ * @param PDO $pdo Database object
+ * @param int $user_id
+ * @return array
+ */
+function edit_user($pdo, $user_info){
+
+    /* Check if current user is allowed to edit this profile */
+    if (get_user_id() != $user_info['user_id']){
+        return [
+            'type' => 'danger',
+            'message' => 'You are not authorized to edit this profile.'
+        ];
+    }
+
+    /* Check if all fields are set */
+    if (
+        empty($user_info['username']) or
+        empty($user_info['firstname']) or
+        empty($user_info['lastname']) or
+        empty($user_info['birth_date']) or
+        empty($user_info['biography']) or
+        empty($user_info['profession']) or
+        empty($user_info['language']) or
+        empty($user_info['email']) or
+        empty($user_info['phone_nr'])
+        ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all fields were filled in.'
+        ];
+    }
+
+    /* Check if username already exists */
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ? AND user_id != ?');
+    $stmt->execute([$user_info['user_name'], $user_info['user_id']]);
+    $users = $stmt->rowCount();
+    if ($users){
+        return [
+            'type' => 'danger',
+            'message' => 'This username exists already. Please choose another one.'
+        ];
+    }
+
+    /* Edit user information */
+    $stmt = $pdo->prepare("UPDATE users SET username = ?, firstname = ?, lastname = ?, birth_date = ?, biography = ?, profession = ?, language = ?, email = ?, phone_nr = ? WHERE user_id = ?");
+    $stmt->execute([
+        $user_info['username'],
+        $user_info['firstname'],
+        $user_info['lastname'],
+        $user_info['birth_date'],
+        $user_info['biography'],
+        $user_info['profession'],
+        $user_info['language'],
+        $user_info['email'],
+        $user_info['phone_nr'],
+        get_user_id()
+    ]);
+    $edited = $stmt->rowCount();
+    if ($edited ==  1) {
+        return [
+            'type' => 'success',
+            'message' => 'Your profile information was successfully edited!'
+        ];
+    }
+    else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error, your information was not edited. Please try again.'
+        ];
+    }
+}
+
+/**
+ * Removes a user from the database based on user ID
+ * @param PDO $pdo Database object
+ * @param int $user_id
+ * @return array
+ */
+function delete_user($pdo, $user_id){
+
+    /* Check if current user is allowed to remove this account */
+    if (get_user_id() != $user_id){
+        return [
+            'type' => 'danger',
+            'message' => 'You are not authorized to delete this account.'
+        ];
+    }
+
+    /* Delete account */
+    $stmt = $pdo->prepare("DELETE FROM users WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted ==  1) {
+        logout();
+        return [
+            'type' => 'success',
+            'message' => 'Your account was successfully deleted!'
+        ];
+    }
+    else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. Your account was not deleted.'
+        ];
     }
 }

@@ -19,7 +19,7 @@
 
             <div class="pd-15">&nbsp;</div>
 
-            <form action="/final_project_ddwt21/register/" method="POST">
+            <form action="<?php $form_action ?>" method="POST">
                 <div class="form-group">
                     <label for="inputUsername">Username</label>
                     <input type="text" class="form-control" id="inputUsername" placeholder="Sandy" name="username" value="<?php if (isset($user_info)){echo $user_info['username'];} ?>" required>
