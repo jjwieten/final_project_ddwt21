@@ -14,16 +14,18 @@ include_once 'header.php';
             <!-- Error message -->
             <?php if (isset($error_msg)){echo $error_msg;} ?>
 
-            <h1><?= $page_title ?></h1>
-            <h5><?= $page_subtitle ?></h5>
+            <h1 align="center"><?= $page_title ?></h1>
             <div align="center">
                 <a>
                     <img alt="Roomnet" src="https://i.imgur.com/KF09FC9.png">
                 </a>
 
             </div>
-            <p>
-                Our mission is to help people find rooms in Groningen
+            <p align="center">
+                Our mission is to help student find a room in a simple and easy way. <br>
+                Finding a beautiful room definitely helps with creating a great student life! <br>
+                For this reasson we want to help students with finding a room. <br>
+                Furthermore, we want to help room owners to find a good tenant.
             </p>
 
            <p></p>

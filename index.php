@@ -598,7 +598,7 @@ $router->get('/privacy/', function() use($navigation_template){
 
 $router->get('/mission/', function() use($navigation_template){
     /* Page info */
-    $page_title = 'Mission statement';
+    $page_title = 'Our mission';
 
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
