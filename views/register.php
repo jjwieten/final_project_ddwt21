@@ -77,6 +77,8 @@
                     '<button type="submit" class="btn btn-warning">Edit</button>';
                 } ?>
             </form>
+            <p color="blue">When you register, you agree to our
+                <a href="/final_project_ddwt21/termsofuse/">Terms of use</a> and our <a href="/final_project_ddwt21/privacy/">Privacy policy</a></p>
 
         </div>
 

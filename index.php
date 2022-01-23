@@ -129,6 +129,7 @@ $router->get('/register/', function() use($navigation_template, $db){
     }
     /* Page info */
     $page_title = 'Register';
+    $page_subtitle ='Create your account here';
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
         'Register' => na('/final_project_ddwt21/register/', True)
