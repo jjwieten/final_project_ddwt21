@@ -18,7 +18,7 @@
 
             <div class="pd-15">&nbsp;</div>
 
-            <form action="<? $form_action?>" method="POST">
+            <form action="<?php $form_action?>" method="POST">
                 <div class="form-group">
                     <label for="inputRoomname">Room name</label>
                     <input type="text" class="form-control" id="inputRoomname" placeholder="" name="room_name" value="<?php if (isset($room_info)){echo $room_info['room_name'];} ?>" required>
