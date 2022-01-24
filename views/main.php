@@ -16,6 +16,12 @@
 
                     <h1><?= $page_title ?></h1>
                     <h5><?= $page_subtitle ?></h5>
+                    <div>
+                        <a>
+                            <img alt="Roomnet" src="https://i.imgur.com/yDYh6qc.jpeg" style='height: 100%; width: 100%; object-fit: contain'/>
+                        </a>
+
+                    </div>
                     <p><?= $page_content ?></p>
                     <?php if(isset($left_content)){echo $left_content;} ?>
                 </div>

@@ -15,7 +15,6 @@
             <?php if (isset($error_msg)){echo $error_msg;} ?>
 
             <h1><?= $page_title ?></h1>
-            <h5><?= $page_subtitle ?></h5>
 
             <div class="pd-15">&nbsp;</div>
 

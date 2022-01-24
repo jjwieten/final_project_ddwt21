@@ -83,14 +83,14 @@ $navigation_template = Array(
 /* Landing page */
 $router->get('/', function() use($navigation_template){
     /* Page info */
-    $page_title = 'Home';
+    $page_title = 'Roomnet';
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', True)
     ]);
     $navigation = get_navigation($navigation_template, 1);
 
     /* Page content */
-    $page_subtitle = 'Subtitle';
+    $page_subtitle = 'The place where you can kick of your student life or upgrade your room!';
     $page_content = 'Content.';
 
     /* Get error msg from POST route */
@@ -119,7 +119,7 @@ $router->get('/overview/', function() use($navigation_template, $db){
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
     /* Choose Template */
-    include use_template('main');
+    include use_template('overview');
 });
 
 /* GET register */
