@@ -12,7 +12,13 @@ $db = connect_db('localhost', 'final_project', 'ddwt21','ddwt21');
 /* Create Router instance */
 $router = new \Bramus\Router\Router();
 
-/* Navigation template */
+/** Navigation template
+ * name = page title
+ * url = page url
+ * login = 'always' means it is always shown, 'yes' and 'no' mean you should or shouldnt be logged in
+ * role = user role: 1, 2, or 'everyone' (no role specified)
+ * align = 'left' or 'right'
+ * */ 
 $navigation_template = Array(
     1 => Array(
         'name' => 'Home',
@@ -153,7 +159,7 @@ $router->post('/register/', function() use($db){
         redirect(sprintf('/final_project_ddwt21/register/?error_msg=%s',
                  json_encode($feedback)));
     } else {
-        /* Redirect to My Account page */
+        /* Redirect to landing page */
         redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
                  json_encode($feedback)));
     }
@@ -315,6 +321,7 @@ $router->get('/login/', function() use($navigation_template, $db){
     include use_template('login');
 });
 
+/* GET logout*/
 $router->get('/logout/', function() use($navigation_template, $db){
     /* Log out user */
     $feedback = logout();
@@ -465,7 +472,6 @@ $router->get('/room/(\d+)', function($room_id) use($navigation_template, $db){
         $optins = get_optins_per_room_table($db, $room_id);
     }
 
-
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
@@ -559,7 +565,7 @@ $router->post('/rooms/delete/', function() use($db){
         redirect('/final_project_ddwt21/login/');
     }
     
-    /* Add message to database */
+    /* Delete room from database */
     $room_id = $_POST['room_id'];
     $feedback = delete_room($db, $room_id);
 
@@ -612,7 +618,7 @@ $router->get('/mission/', function() use($db, $navigation_template){
         'Edit Room' => na('/final_project_ddwt21/mission/', True)
     ]);
     $unread_messages = unread_count($db);
-    $navigation = get_navigation($navigation_template, 11, $unread_messages);
+    $navigation = get_navigation($navigation_template, 0, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'Our mission';

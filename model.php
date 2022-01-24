@@ -69,6 +69,8 @@ function get_breadcrumbs($breadcrumbs) {
 /**
  * Creates navigation HTML code using given array
  * @param array $navigation Array with as Key the page name and as Value the corresponding URL
+ * @param $active_id id of current page
+ * @param $unread_message int, number of unread messages
  * @return string HTML code that represents the navigation
  */
 function get_navigation($template, $active_id, $unread_messages){
@@ -277,7 +279,7 @@ function delete_room($pdo, $room_id){
 /**
  * Funciton to edit room
  * @param PDO $pdo Database object
- * @param int $room_id
+ * @param int $room_info
  * @return array
  */
 function edit_room($pdo, $room_info){
@@ -321,7 +323,7 @@ function edit_room($pdo, $room_info){
         ];
     }
 
-    /* Add Room */
+    /* Update Room */
     $stmt = $pdo->prepare("UPDATE rooms SET room_name = ?, price = ?, type = ?, size = ?, city = ?, postcode = ?, street = ?, house_nr = ?, description = ?, owner_id = ? WHERE room_id = ?");
     $stmt->execute([
         $room_info['room_name'],
@@ -474,7 +476,7 @@ function get_rooms_table($pdo){
 }
 
 /**
- * Add room to the database
+ * Add optin to the database
  * @param PDO $pdo Database object
  * @param int $room_id
  * @return array Associative array with key type and message
@@ -500,7 +502,7 @@ function add_optin($pdo, $room_id){
         ];
     }
 
-    /* Add Room */
+    /* Add optin */
     $stmt = $pdo->prepare("INSERT INTO `opt-ins` (tenant_id, room_id) VALUES (?, ?)");
     $stmt->execute([
         $tenant_id,
@@ -536,8 +538,9 @@ function get_optins_user($pdo, $current_user){
 
 /**
  * Get array with all listed optins for a specific room from the database
- * Also included is the name of the tenant
+ * Also included is the full name of the tenant
  * @param PDO $pdo Database object
+ * @param $room_id
  * @return array Associative array with all optins for that room
  */
 function get_optins_room($pdo, $room_id){
@@ -558,6 +561,7 @@ function get_optins_room($pdo, $room_id){
 /**
  * Creates a Bootstrap table with a list of optins for the current user
  * @param PDO $pdo Database object
+ * @param $room_id
  * @return string
  */
 function get_optins_per_room_table($pdo, $room_id){
@@ -869,7 +873,7 @@ function send_message($pdo, $message_info){
  * This function takes form data input and puts it into the database
  * @param PDO $pdo Database object
  * @param $form_data User info for registration
- * return string response
+ * @return string response
  */
 function register_user($pdo, $form_data){
     if (
@@ -939,7 +943,11 @@ function register_user($pdo, $form_data){
     ];
 }
 
-/* Function to login the user */
+/** Function to login the user
+ * @param PDO $pdo Database object
+ * @param $form_data User info for registration
+ * @return Array with key type and message
+ */
 function login_user($pdo, $form_data)
 {
     /* Check if all fields are set */
@@ -1021,10 +1029,14 @@ function redirect($location){
 }
 
 
-/* Get user name */
-function get_username($pdo, $series_id){
+/** Function to get username based on user_id
+ * @param PDO $pdo Database object
+ * @param $user_id
+ * @return string
+ */
+function get_username($pdo, $user_id){
     $stmt = $pdo->prepare('SELECT username FROM users WHERE user_id = ?');
-    $stmt->execute([$series_id]);
+    $stmt->execute([$user_id]);
     $username = $stmt->fetch();
     $user_name = implode( " ", $username );
 
@@ -1108,7 +1120,7 @@ function get_user_id(){
 }
 
 /**
- * Get current user id
+ * Get current user role
  * @return bool current user id or False if not logged in
  */
 function get_user_role(){
@@ -1253,7 +1265,6 @@ function delete_user($pdo, $user_id){
 /**
  * Counts unread message for user_id
  * @param PDO $pdo Database object
- * @param int $user_id ID of the user
  * @return int
  */
 function unread_count($pdo){
@@ -1276,22 +1287,4 @@ function read_message($pdo, $chat_id){
     /* Change read status */
     $stmt = $pdo->prepare("UPDATE messages SET read_message = 1 WHERE receiver_id = ? AND sender_id = ?");
     $stmt->execute([$user_id, $chat_id]);
-}
-
-/**
- * Check if user can view profile
- * @param PDO $pdo Database object
- * @param int $profile_id
- * @return boolean
- */
-function view_profile($pdo, $profile_id){
-    $user_id = get_user_id();
-    $user_role = get_user_role();
-    $profile_role = get_user_info($pdo, $profile_id);
-    
-    if ($user_role != $profile_role){
-        return True;
-    } else {
-        return False;
-    }
 }
