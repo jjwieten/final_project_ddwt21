@@ -7,26 +7,21 @@
     <div class="pd-15">&nbsp</div>
     <?= $breadcrumbs ?>
     
-        <div class="row">
+            <div class="row">
 
-            <!-- Main content -->
-            <div class="col-md-12">
-                <!-- Error message -->
-                <?php if (isset($error_msg)){echo $error_msg;} ?>
+                <!-- Main content -->
+                <div class="col-md-12">
+                    <!-- Error message -->
+                    <?php if (isset($error_msg)){echo $error_msg;} ?>
 
-                <h1><?= $page_title ?></h1>
-                <h5><?= $page_subtitle ?></h5>
-                <div>
-                    <a>
-                        <img alt="Roomnet" src="https://i.imgur.com/yDYh6qc.jpeg" style='height: 100%; width: 100%; object-fit: contain'/>
-                    </a>
-
+                    <h1><?= $page_title ?></h1>
+                    <h5><?= $page_subtitle ?></h5>
+                    
+                    <p><?= $page_content ?></p>
+                    <?php if(isset($main_content)){echo $main_content;} ?>
                 </div>
-                <p><?= $page_content ?></p>
-                <?php if(isset($left_content)){echo $left_content;} ?>
             </div>
         </div>
-    </div>
 
         <?php
         include_once 'footer.php';

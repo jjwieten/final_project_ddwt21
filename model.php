@@ -92,7 +92,7 @@ function get_navigation($template, $active_id, $unread_messages){
                     $badge = ' <span class="badge badge-light">';
                     $badge .= $unread_messages;
                     $badge .= '</span>';
-                }
+                } else {$badge = "";}
                 if (($id == $active_id) and (($info['login'] == 'yes') or ($info['login'] == 'always'))){
                     $navigation_exp .= '<li class="nav-item active">';
                     $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name']. $badge .'</a>';
@@ -991,7 +991,9 @@ function login_user($pdo, $form_data)
 
 /* Checks if logged in */
 function check_login(){
-    session_start();
+    if(!isset($_SESSION)) { 
+        session_start(); 
+    }
     if (isset($_SESSION['user_id'])){
         return True;
     } else {
@@ -1274,4 +1276,22 @@ function read_message($pdo, $chat_id){
     /* Change read status */
     $stmt = $pdo->prepare("UPDATE messages SET read_message = 1 WHERE receiver_id = ? AND sender_id = ?");
     $stmt->execute([$user_id, $chat_id]);
+}
+
+/**
+ * Check if user can view profile
+ * @param PDO $pdo Database object
+ * @param int $profile_id
+ * @return boolean
+ */
+function view_profile($pdo, $profile_id){
+    $user_id = get_user_id();
+    $user_role = get_user_role();
+    $profile_role = get_user_info($pdo, $profile_id);
+    
+    if ($user_role != $profile_role){
+        return True;
+    } else {
+        return False;
+    }
 }

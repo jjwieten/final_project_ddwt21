@@ -125,9 +125,6 @@ $router->get('/overview/', function() use($navigation_template, $db){
 
 /* GET register */
 $router->get('/register/', function() use($navigation_template, $db){
-    if ( check_login() ) {
-        redirect('/final_project_ddwt21/');
-    }
     /* Page info */
     $page_title = 'Register';
     $note = 'Note: To offer rooms you need to register as Owner, to find rooms you need to register as Tenant. You cannot change this after you create your account.';
@@ -179,6 +176,9 @@ $router->post('/login/', function() use($db){
 
 /* GET messages */
 $router->get('/messages/', function() use($navigation_template, $db){
+    if (!check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
     /* Page info */
     $page_title = 'Messages';
     $breadcrumbs = get_breadcrumbs([
@@ -257,13 +257,13 @@ $router->get('/optins/', function() use($navigation_template, $db){
     /* Page content */
     $page_subtitle = 'Overview of opt-ins you initiated';
     $page_content = 'Click on Cancel to cancel your opt-in. Or view the room information by clicking on View room.';
-    $left_content = get_optins_table($db);
+    $main_content = get_optins_table($db);
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
     /* Choose Template */
-    include use_template('main');
+    include use_template('optins');
 });
 
 /* POST add optin */
@@ -326,8 +326,22 @@ $router->get('/logout/', function() use($navigation_template, $db){
 
 /* GET user profile */
 $router->get('/user/(\d+)', function($user_id) use($navigation_template, $db){
+    if (!check_login()) {
+        redirect('/final_project_ddwt21/login/');
+    }
     $user_info = get_user_info($db, $user_id);
     $own_profile = (get_user_id() == $user_id);
+    $current_user_id = get_user_id();
+    $user_role = get_user_role();
+    /* Check if user is allowed to view profile. Tenants can only see owners profiles and vice versa */
+    if (($current_user_id != $user_id) and ($user_role == $user_info['role'])){
+        $feedback = [
+            'type' => 'danger',
+            'message' => 'You are not allowed to view this profile'
+        ];
+        redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
+                json_encode($feedback)));
+    }
     /* Page info */
     $page_title = 'Profile of '.$user_info['firstname'].' '.$user_info['lastname'];
     $breadcrumbs = get_breadcrumbs([
@@ -355,6 +369,9 @@ $router->get('/user/(\d+)', function($user_id) use($navigation_template, $db){
 
 /* GET edit user profile */
 $router->get('/user/edit/', function() use($navigation_template, $db){
+    if (!check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
     /* Page info */
     $page_title = 'Edit profile information';
     $page_subtitle = 'Change your profile information here';
@@ -411,7 +428,21 @@ $router->post('/user/delete/', function() use($db){
 
 /* GET single room */
 $router->get('/room/(\d+)', function($room_id) use($navigation_template, $db){
+    if (!check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
     $room_info = get_room_info($db, $room_id);
+    $user_id = get_user_id();
+    $user_role = get_user_role();
+    /* Check if user is allowed to view room. Tenants can see all rooms, owners can only see their own rooms */
+    if (($user_role == 1) and ($room_info['owner_id'] != $user_id)){
+        $feedback = [
+            'type' => 'danger',
+            'message' => 'You are not allowed to view this room'
+        ];
+        redirect(sprintf('/final_project_ddwt21/overview/?error_msg=%s',
+                json_encode($feedback)));
+    }
 
     /* Page info */
     $page_title = $room_info['room_name'];
@@ -444,6 +475,9 @@ $router->get('/room/(\d+)', function($room_id) use($navigation_template, $db){
 
 /* GET add room */
 $router->get('/addroom/', function() use($navigation_template, $db){
+    if (!check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
     /* Page info */
     $page_title = 'Add Room';
     $breadcrumbs = get_breadcrumbs([
@@ -479,6 +513,9 @@ $router->post('/addroom/', function() use($db){
 
 /* GET edit room */
 $router->get('/rooms/edit/', function() use($navigation_template, $db){
+    if (!check_login() ) {
+        redirect('/final_project_ddwt21/login/');
+    }
     /* Page info */
     $page_title = 'Edit Room';
     $breadcrumbs = get_breadcrumbs([
