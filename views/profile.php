@@ -10,7 +10,7 @@
     <div class="row">
 
         <!-- Main content -->
-        <div class="col-md-8">
+        <div class="col-md-12">
             <!-- Error message -->
             <?php if (isset($error_msg)){echo $error_msg;} ?>
 
@@ -23,48 +23,46 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <th scope="row">Username</th>
-                                <td><?= $user_info['username']?></td>
+                                <th scope="row" style="width: 30%;">Username</th>
+                                <td style="width: 70%;"><?= $user_info['username']?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Full name</th>
-                                <td><?= $user_info['firstname'] .' '.$user_info['lastname'] ?></td>
+                                <th scope="row" style="width: 30%;">Full name</th>
+                                <td style="width: 70%;"><?= $user_info['firstname'] .' '.$user_info['lastname'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Birthdate</th>
-                                <td><?= $user_info['birth_date'] ?></td>
+                                <th scope="row" style="width: 30%;">Birthdate</th>
+                                <td style="width: 70%;"><?= $user_info['birth_date'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Studies / profession</th>
-                                <td><?= $user_info['profession'] ?></td>
+                                <th scope="row" style="width: 30%;">Studies / profession</th>
+                                <td style="width: 70%;"><?= $user_info['profession'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Biography</th>
-                                <td><?= $user_info['biography'] ?></td>
+                                <th scope="row" style="width: 30%;">Biography</th>
+                                <td style="width: 70%;"><?= $user_info['biography'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Language</th>
-                                <td><?= $user_info['language'] ?></td>
+                                <th scope="row" style="width: 30%;">Language</th>
+                                <td style="width: 70%;"><?= $user_info['language'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">E-mail</th>
-                                <td><?= $user_info['email'] ?></td>
+                                <th scope="row" style="width: 30%;">E-mail</th>
+                                <td style="width: 70%;"><?= $user_info['email'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Phone number</th>
-                                <td><?= $user_info['phone_nr'] ?></td>
+                                <th scope="row" style="width: 30%;">Phone number</th>
+                                <td style="width: 70%;"><?= $user_info['phone_nr'] ?></td>
                             </tr>
                             </tbody>
                         </table>
                         <?php if ($own_profile) { ?>
-                         <div class="row">   
-                                <div class="col-sm-2">
-                                    <a href="/final_project_ddwt21/user/edit/?user_id=<?= $user_info['user_id'] ?>" role="button" class="btn btn-secondary">Edit account information</a>
-                                    <form action="/final_project_ddwt21/user/delete" method="POST">
-                                        <input type="hidden" value="<?= $user_info['user_id'] ?>" name="user_id">
-                                        <button type="submit" class="btn btn-danger">Delete account</button>
-                                    </form>
-                                </div>
+                            <div class="row ml-1">
+                                <a href="/final_project_ddwt21/user/edit/?user_id=<?= $user_info['user_id'] ?>" role="button" class="btn btn-secondary">Edit account information</a>
+                                <form action="/final_project_ddwt21/user/delete" method="POST">
+                                    <input type="hidden" value="<?= $user_info['user_id'] ?>" name="user_id">
+                                    <button type="submit" class="btn btn-danger ml-1">Delete account</button>
+                                </form>
                             </div>
                         <?php } else {
                             echo '<a href="/final_project_ddwt21/user/'.$user_info["user_id"].'/?message='.$user_info["user_id"].'" role="button" class="btn btn-secondary">Send message</a>';

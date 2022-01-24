@@ -24,7 +24,18 @@
     padding-bottom: 25px;
 }
 
+a.conversation {
+    color: #333333;
+}
 
+.break-text {
+    display: inline;
+    word-break: break-all;
+}
+
+.bg-lightblue {
+    background-color: rgb(168, 224, 251);
+}
 
 /* STYLES SPECIFIC TO FOOTER  */
 .footer {

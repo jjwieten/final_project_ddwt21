@@ -10,7 +10,7 @@
     <div class="row">
 
         <!-- Main content -->
-        <div class="col-md-8">
+        <div class="col-md-12">
             <!-- Error message -->
             <?php if (isset($error_msg)){echo $error_msg;} ?>
 
@@ -23,33 +23,33 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <th scope="row">Address</th>
-                                <td><?= $room_info['street'] . ' ' . $room_info['house_nr'] . '</br>' . $room_info['postcode'] . ' ' . $room_info['city']?></td>
+                                <th scope="row" style="width: 20%;">Address</th>
+                                <td style="width: 80%;"><?= $room_info['street'] . ' ' . $room_info['house_nr'] . '</br>' . $room_info['postcode'] . ' ' . $room_info['city']?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Type</th>
-                                <td><?= $room_info['type'] ?></td>
+                                <th scope="row" style="width: 20%;">Type</th>
+                                <td style="width: 80%;"><?= $room_info['type'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Price</th>
-                                <td>&euro;	<?= $room_info['price'] ?></td>
+                                <th scope="row" style="width: 20%;">Price</th>
+                                <td style="width: 80%;">&euro;	<?= $room_info['price'] ?></td>
                             </tr>
                             <tr>
-                                <th scope="row">Description</th>
-                                <td><?= $room_info['description'] ?></td>
+                                <th scope="row" style="width: 20%;">Description</th>
+                                <td style="width: 80%;"><?= $room_info['description'] ?></td>
                             </tr>
                             <?php if ($user_role == 2) { ?>
                             <tr>
-                                <th scope="row">Owner</th>
-                                <td><?= $owner_name ?></td>
+                                <th scope="row" style="width: 20%;">Owner</th>
+                                <td style="width: 80%;"><?= $owner_name ?></td>
                             </tr>
                             <?php } ?>
                             </tbody>
                         </table>
                         <?php if ($user_role == 1) { ?>
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <a href="/final_project_ddwt21/rooms/edit/?room_id=<?= $room_info['room_id'] ?>" role="button" class="btn btn-secondary">Edit</a>
+                            <div class="row ml-1">
+                                <a href="/final_project_ddwt21/rooms/edit/?room_id=<?= $room_info['room_id'] ?>" role="button" class="btn btn-secondary">Edit</a>
+                                <div class="ml-1">
                                     <form action="/final_project_ddwt21/rooms/delete" method="POST">
                                         <input type="hidden" value="<?= $room_info['room_id'] ?>" name="room_id">
                                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -58,22 +58,22 @@
                             </div>
                         <?php } ?>
                         <?php if ($user_role == 2) { ?>
-                            <div class="row">
-                            <div class="col-sm-2">
-                                    <form action="/final_project_ddwt21/optins/add" method="POST">
+                            <div class="row ml-1">
+                            <div>
+                            <form action="/final_project_ddwt21/optins/add" method="POST">
                                         <input type="hidden" value="<?= $room_info['room_id'] ?>" name="room_id">
-                                        <button type="submit" class="btn btn-info">Opt-in</button>
+                                        <button type="submit" class="btn btn-secondary">Opt-in</button>
                                     </form>
-                                </div>
-                                <td><a href="/final_project_ddwt21/user/<?= $room_info['owner_id'] ?>" role="button" class="btn btn-secondary">View owner profile</a></td>
-                                <a href="/final_project_ddwt21/room/<?= $room_info['room_id'] ?>/?message=<?= $room_info['owner_id'] ?>" role="button" class="btn btn-secondary">Message owner</a>
+                            </div>
+                            <div class="ml-1">
+                            <a href="/final_project_ddwt21/room/<?= $room_info['room_id'] ?>/?message=<?= $room_info['owner_id'] ?>" role="button" class="btn btn-secondary">Message owner</a>                                    
+                            </div>
                             </div>
                         <?php } ?>
-                        <div class="pd-15">&nbsp;</div>
                         
                         <?php if (isset($chat_id)) {
                             echo '
-                                <div class="col-md-12">
+                                <div class="">
                                 <div class="pd-15">&nbsp;</div>
                                 <h5>Send a message to '.$receiver_name.'</h5>
                                     <form action="/final_project_ddwt21/messages/" method="POST">
@@ -88,14 +88,13 @@
                                     
                                 </div>';
                         } else
-                        if (isset($optins)) {echo $optins;} ?>
+                        if (isset($optins)) {echo '<div class="pd-15">&nbsp;</div>' .$optins;} ?>
                         
                         
         </div>
 
     </div>
 </div>
-
 <?php
 include_once 'footer.php';
 ?>

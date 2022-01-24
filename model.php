@@ -74,7 +74,7 @@ function get_breadcrumbs($breadcrumbs) {
 function get_navigation($template, $active_id){
     $logged_in = check_login();
     $navigation_exp = '
-    <div class="container" id="header">
+    <div class="" id="header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
         <a class="navbar-brand" href="#">
             <img src="https://i.imgur.com/KF09FC9.png" alt="Roomnet logo" height="36">
@@ -553,7 +553,7 @@ function get_optins_room($pdo, $room_id){
 function get_optins_per_room_table($pdo, $room_id){
     $optins = get_optins_room($pdo, $room_id);
     $table_exp = '
-        <table class="table table-hover">
+        <table class="table table-hover w-auto">
             <thead class="thead-light">
                 <tr>
                     <th scope="col" colspan="3">Opt-ins</th>
@@ -564,8 +564,8 @@ function get_optins_per_room_table($pdo, $room_id){
         $table_exp .= '
         <tr>
             <th>'.$value['username'].'</th>
-            <td><a href="/final_project_ddwt21/user/'.$value['tenant_id'].'/" role="button" class="btn btn-secondary">View profile</a></td>
-            <td><a href="/final_project_ddwt21/room/'.$room_id.'/?message='.$value['tenant_id'].'" role="button" class="btn btn-secondary">Send message</a></td>
+            <td><a href="/final_project_ddwt21/user/'.$value['tenant_id'].'/" role="button" class="btn btn-secondary btn-sm">View profile</a></td>
+            <td><a href="/final_project_ddwt21/room/'.$room_id.'/?message='.$value['tenant_id'].'" role="button" class="btn btn-secondary btn-sm">Send message</a></td>
         ';
     }
     $table_exp .= '
@@ -599,7 +599,7 @@ function get_optins_table($pdo){
     $current_user = get_user_id();
     $optins = get_optins_user($pdo, $current_user);
     $table_exp = '
-    <table class="table table-hover">
+    <table class="table table-hover w-auto">
     <thead
     <tr>
         <th scope="col">Room name</th>
@@ -612,10 +612,10 @@ function get_optins_table($pdo){
         $table_exp .= '
         <tr>
             <th scope="row">'.$value['room_name'].'</th>
-            <td><a href="/final_project_ddwt21/room/'.$value['room_id'].'" role="button" class="btn btn-primary">View room</a></td>
+            <td><a href="/final_project_ddwt21/room/'.$value['room_id'].'" role="button" class="btn btn-secondary btn-sm">View room</a></td>
             <td><form action="/final_project_ddwt21/optins/delete/" method="POST">
             <input type="hidden" value="'.$value['opt-in_id'].'" name="optin_id">
-            <button type="submit" class="btn btn-danger">Cancel</button></form></td>
+            <button type="submit" class="btn btn-danger btn-sm">Cancel</button></form></td>
         </tr>
         ';
     }
@@ -712,12 +712,12 @@ function get_messages_divs($pdo, $user1, $user2){
         if ($value['sender_id'] == $user1) {
             $message_divs .= '
             <div class="row">
-                <div class="ml-auto col-md-8 border rounded bg-info my-2 py-1">
+                <div class="ml-auto col-md-8 border rounded bg-lightblue my-2 py-1">
                 <div class="d-flex">
                     <div class="font-weight-light">You</div>
                     <div class="ml-auto font-weight-light small">'.$value['datetime_formatted'].'</div>
                 </div>
-                    <div class="text-left">'.$value['content'].'</div>
+                    <div class="text-left break-text">'.$value['content'].'</div>
                 </div>
             </div>';
         } else {
@@ -728,7 +728,7 @@ function get_messages_divs($pdo, $user1, $user2){
                     <div class="font-weight-light">'.$user2_name.'</div>
                     <div class="ml-auto font-weight-light small">'.$value['datetime_formatted'].'</div>
                 </div>
-                    <div class="text-left">'.$value['content'].'</div>
+                    <div class="text-left break-text">'.$value['content'].'</div>
                 </div>
             </div>';
         }
@@ -803,7 +803,7 @@ function get_conversation_overview_divs($pdo, $user1){
         foreach ($conversation_overview as $key => $value){
             $conversation_divs .= '
             <div class="col-md-12 border">
-                <a href="/final_project_ddwt21/messages/?chat_id='.$value['partner_user_id'].'" class="stretched-link">
+                <a href="/final_project_ddwt21/messages/?chat_id='.$value['partner_user_id'].'" class="stretched-link conversation">
                     <div class="font-weight-bold">'.$value['full_name'].'</div>
                 </a>
                 <div class="font-weight-light no-overflow">'.$value['last_message'].'</div>

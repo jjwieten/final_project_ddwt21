@@ -9,7 +9,7 @@ include_once 'header.php';
 
             <div class="row">
                 <h1 class="col-md-12"><?= $page_title ?></h1>
-                
+                <div class="col-md-12">&nbsp</div>
                 <!-- Conversations overview -->
                 <?php echo $conversation_overview; ?>
 
