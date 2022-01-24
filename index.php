@@ -531,7 +531,7 @@ $router->post('/rooms/delete/', function() use($db){
                 json_encode($feedback)));
 });
 
-$router->get('/termsofuse/', function() use($navigation_template){
+$router->get('/termsofuse/', function() use($db, $navigation_template){
     /* Page info */
     $page_title = 'Terms of use';
 
@@ -548,7 +548,7 @@ $router->get('/termsofuse/', function() use($navigation_template){
     include use_template('termsofuse');
 });
 
-$router->get('/privacy/', function() use($navigation_template){
+$router->get('/privacy/', function() use($db, $navigation_template){
     /* Page info */
     $page_title = 'Privacy';
 
@@ -566,7 +566,7 @@ $router->get('/privacy/', function() use($navigation_template){
     include use_template('privacy');
 });
 
-$router->get('/mission/', function() use($navigation_template){
+$router->get('/mission/', function() use($db, $navigation_template){
     /* Page info */
     $page_title = 'Our mission';
 
