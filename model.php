@@ -892,6 +892,18 @@ function send_message($pdo, $message_info){
         ];
     }
 
+    /* Check if user is allowed to send message */
+    $user_role = get_user_role();
+    $receiver_role = get_user_info($pdo, $message_info['receiver_id'])['role'];
+    if (
+        $user_role == $receiver_role
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You are not allowed to send this user a message.'
+        ];
+    }
+    
     /* Add message to database */
     $stmt = $pdo->prepare("INSERT INTO messages (content, sender_id, receiver_id) VALUES (?, ?, ?)");
     $stmt->execute([
