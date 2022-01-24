@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Gegenereerd op: 22 jan 2022 om 16:45
+-- Gegenereerd op: 24 jan 2022 om 03:45
 -- Serverversie: 5.7.24
 -- PHP-versie: 8.0.1
 
@@ -34,7 +34,8 @@ CREATE TABLE `messages` (
   `receiver_id` int(11) NOT NULL,
   `sender_id` int(11) NOT NULL,
   `datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `content` text NOT NULL
+  `content` text NOT NULL,
+  `read_message` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

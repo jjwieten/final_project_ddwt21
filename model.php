@@ -71,7 +71,7 @@ function get_breadcrumbs($breadcrumbs) {
  * @param array $navigation Array with as Key the page name and as Value the corresponding URL
  * @return string HTML code that represents the navigation
  */
-function get_navigation($template, $active_id){
+function get_navigation($template, $active_id, $unread_messages){
     $logged_in = check_login();
     $navigation_exp = '
     <div class="" id="header">
@@ -88,12 +88,17 @@ function get_navigation($template, $active_id){
         $user_role = $_SESSION['user_role'];
         foreach ($template as $id => $info) {
             if ((($info['login'] == 'yes') or ($info['login'] == 'always')) and (($user_role == $info['role']) or ($info['role'] == 'everyone')) and $info['align'] == 'left') {
+                if ($info['name'] == "Messages") {
+                    $badge = ' <span class="badge badge-light">';
+                    $badge .= $unread_messages;
+                    $badge .= '</span>';
+                }
                 if (($id == $active_id) and (($info['login'] == 'yes') or ($info['login'] == 'always'))){
                     $navigation_exp .= '<li class="nav-item active">';
-                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name']. $badge .'</a>';
                 }else{
                     $navigation_exp .= '<li class="nav-item">';
-                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name']. $badge .'</a>';
                 }
             }
             $navigation_exp .= '</li>';
@@ -103,12 +108,17 @@ function get_navigation($template, $active_id){
         <ul class="navbar-nav ml-auto">';
         foreach ($template as $id => $info) {
             if ((($info['login'] == 'yes') or ($info['login'] == 'always')) and (($user_role == $info['role']) or ($info['role'] == 'everyone')) and $info['align'] == 'right') {
+                if ($info['name'] == "Messages") {
+                    $badge = ' <span class="badge badge-light">';
+                    $badge .= $unread_messages;
+                    $badge .= '</span>';
+                } else {$badge = "";}
                 if ($id == $active_id){
                     $navigation_exp .= '<li class="nav-item active">';
-                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name']. $badge .'</a>';
                 }else{
                     $navigation_exp .= '<li class="nav-item">';
-                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
+                    $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name']. $badge .'</a>';
                 }
             }
             $navigation_exp .= '</li>';
@@ -1234,4 +1244,32 @@ function delete_user($pdo, $user_id){
             'message' => 'An error occurred. Your account was not deleted.'
         ];
     }
+}
+
+/**
+ * Counts unread message for user_id
+ * @param PDO $pdo Database object
+ * @param int $user_id ID of the user
+ * @return int
+ */
+function unread_count($pdo){
+    $user_id = get_user_id();
+    $stmt = $pdo->prepare('SELECT COUNT(message_id) AS unread FROM messages WHERE receiver_id = ? AND read_message = 0');
+    $stmt->execute([$user_id]);
+    $message_info = $stmt->fetch();
+
+    return $message_info['unread'];
+}
+
+/**
+ * Change read status of messages
+ * @param PDO $pdo Database object
+ * @param int $chat_id
+ */
+function read_message($pdo, $chat_id){
+    $user_id = get_user_id();
+
+    /* Change read status */
+    $stmt = $pdo->prepare("UPDATE messages SET read_message = 1 WHERE receiver_id = ? AND sender_id = ?");
+    $stmt->execute([$user_id, $chat_id]);
 }

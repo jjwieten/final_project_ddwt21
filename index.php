@@ -81,13 +81,14 @@ $navigation_template = Array(
 
 
 /* Landing page */
-$router->get('/', function() use($navigation_template){
+$router->get('/', function() use($navigation_template, $db){
     /* Page info */
     $page_title = 'Roomnet';
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 1);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 1, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'The place where you can kick of your student life or upgrade your room!';
@@ -108,7 +109,8 @@ $router->get('/overview/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Overview' => na('/final_project_ddwt21/overview/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 2);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 2, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'Overview of rooms';
@@ -134,7 +136,8 @@ $router->get('/register/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Register' => na('/final_project_ddwt21/register/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 3);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 3, $unread_messages);
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
@@ -183,7 +186,6 @@ $router->get('/messages/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Messages' => na('/final_project_ddwt21/messages/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 4);
 
     if(check_login()){
         /* Page content */
@@ -191,9 +193,13 @@ $router->get('/messages/', function() use($navigation_template, $db){
         $chat_id = $_GET['chat_id'];
         $conversation_overview = get_conversation_overview_divs($db, $current_user);
         if (isset($chat_id)){
+            read_message($db, $chat_id);
             $chat = get_messages_divs($db, $current_user, $chat_id);
         }
     }
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 4, $unread_messages);
+    
         /* Get error msg from POST route */
         if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 
@@ -246,7 +252,8 @@ $router->get('/optins/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Messages' => na('/final_project_ddwt21/optins/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 9);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 9, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'Overview of opt-ins you initiated';
@@ -295,7 +302,8 @@ $router->get('/login/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Overview' => na('/final_project_ddwt21/login/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 5);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 5, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'Login here';
@@ -327,10 +335,11 @@ $router->get('/user/(\d+)', function($user_id) use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Profile of '.$user_info['firstname'].' '.$user_info['lastname'] => na('/final_project_ddwt21/user/'.$user_id, True)
     ]);
+    $unread_messages = unread_count($db);
     if ($own_profile) {
-        $navigation = get_navigation($navigation_template, 6);
+        $navigation = get_navigation($navigation_template, 6, $unread_messages);
     } else
-        $navigation = get_navigation($navigation_template, 0);
+        $navigation = get_navigation($navigation_template, 0, $unread_messages);
 
     /* Page content */
     if (isset($_GET['message'])) {
@@ -354,7 +363,8 @@ $router->get('/user/edit/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Edit profile information' => na('/final_project_ddwt21/user/edit/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 6);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 6, $unread_messages);
 
     /* Page content*/
     $form_action = '/final_project_ddwt21/user/edit/';
@@ -410,7 +420,8 @@ $router->get('/room/(\d+)', function($room_id) use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         $room_info['room_name'] => na('/final_project_ddwt21/rooms/'.$room_id, True)
     ]);
-    $navigation = get_navigation($navigation_template, 0);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 0, $unread_messages);
 
     /* Page content */
     if (isset($_GET['message'])) {
@@ -440,7 +451,8 @@ $router->get('/addroom/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Add Room' => na('/final_project_ddwt21/addroom/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 8);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 8, $unread_messages);
 
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
@@ -474,7 +486,8 @@ $router->get('/rooms/edit/', function() use($navigation_template, $db){
         'Home' => na('/final_project_ddwt21/', False),
         'Edit Room' => na('/final_project_ddwt21/rooms/edit/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 8);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 8, $unread_messages);
 
     /* Page content*/
     $form_action = '/final_project_ddwt21/rooms/edit/';
@@ -519,50 +532,6 @@ $router->post('/rooms/delete/', function() use($db){
                 json_encode($feedback)));
 });
 
-$router->get('/owner/', function() use($navigation_template, $db){
-    if (!check_login()){
-        $feedback = 'You have to log in to be able to view this page';
-        /* Redirect to home page */
-        redirect(sprintf('/final_project_ddwt21/login/?error_msg=%s',
-            json_encode($feedback)));
-    }
-    else {
-        $role_array = check_role($db);
-        if ($role_array['role'] == '1') {
-            echo "Welcome owner";
-        }
-        else{
-            $feedback = 'You try to get in the wrong account page';
-            /* Redirect to home page */
-            redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
-                json_encode($feedback)));
-        }
-    };
-});
-
-$router->get('/tenant/', function() use($navigation_template, $db){
-    if (!check_login()){
-        $feedback = 'You have to log in to be able to view this page';
-        /* Redirect to home page */
-        redirect(sprintf('/final_project_ddwt21/login/?error_msg=%s',
-            json_encode($feedback)));
-    }
-    else {
-        $role_array = check_role($db);
-        if ($role_array['role'] == '2') {
-            echo "Welcome tenant";
-        }
-        else{
-            $feedback = 'You try to get in the wrong account page';
-            /* Redirect to home page */
-            redirect(sprintf('/final_project_ddwt21/?error_msg=%s',
-                json_encode($feedback)));
-        }
-    };
-});
-
-
-
 $router->get('/termsofuse/', function() use($navigation_template){
     /* Page info */
     $page_title = 'Terms of use';
@@ -571,7 +540,7 @@ $router->get('/termsofuse/', function() use($navigation_template){
         'Home' => na('/final_project_ddwt21/', False),
         'Edit Room' => na('/final_project_ddwt21/termsofuse/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 0);
+    $navigation = get_navigation($navigation_template, 0, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'Our terms and conditions';
@@ -588,7 +557,8 @@ $router->get('/privacy/', function() use($navigation_template){
         'Home' => na('/final_project_ddwt21/', False),
         'Edit Room' => na('/final_project_ddwt21/privacy/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 0);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 0, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'Our privacy policy';
@@ -605,7 +575,8 @@ $router->get('/mission/', function() use($navigation_template){
         'Home' => na('/final_project_ddwt21/', False),
         'Edit Room' => na('/final_project_ddwt21/mission/', True)
     ]);
-    $navigation = get_navigation($navigation_template, 11);
+    $unread_messages = unread_count($db);
+    $navigation = get_navigation($navigation_template, 11, $unread_messages);
 
     /* Page content */
     $page_subtitle = 'Our mission';
