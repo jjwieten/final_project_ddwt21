@@ -196,7 +196,7 @@ $router->get('/messages/', function() use($navigation_template, $db){
         /* Page content */
         $current_user = $_SESSION['user_id'];
         $chat_id = $_GET['chat_id'];
-        $conversation_overview = get_conversation_overview_divs($db, $current_user);
+        $conversation_overview = get_conversation_overview_divs($db, $current_user, $chat_id);
         if (isset($chat_id)){
             read_message($db, $chat_id);
             $chat = get_messages_divs($db, $current_user, $chat_id);

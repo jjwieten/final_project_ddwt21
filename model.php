@@ -777,6 +777,20 @@ function get_last_message_text($pdo, $user1, $user2){
 }
 
 /**
+ * Check if last message of conversation is unread
+ * @param PDO $pdo Database object
+ * @param user1 id from users table from database
+ * @param user2 id from users table from database
+ * @return boolean
+ */
+function get_converstion_read_count($pdo, $user1, $user2){
+    $stmt = $pdo->prepare('SELECT COUNT(read_message) AS read_count FROM messages WHERE receiver_id = ? AND sender_id = ? AND read_message  = 0');
+    $stmt->execute([$user1, $user2]);
+    $message_info = $stmt->fetch();
+    return ($message_info['read_count'] != 0);
+}
+
+/**
  * Get ids of users with whom the logged in person has conversations
  * @param user1 id from users table from database
  * @param PDO $pdo Database object
@@ -809,7 +823,7 @@ function get_conversation_overview($pdo, $user1){
  * @param user1 id from users table from database
  * @return string
  */
-function get_conversation_overview_divs($pdo, $user1){
+function get_conversation_overview_divs($pdo, $user1, $chat_id){
     $conversation_overview = get_conversation_overview($pdo, $user1);
     $conversation_divs = '<div class="col-md-3">';
     if (empty($conversation_overview)) {
@@ -817,13 +831,44 @@ function get_conversation_overview_divs($pdo, $user1){
         <div class="col-md-12 border">You do not have any conversations yet.</div>';
     } else {
         foreach ($conversation_overview as $key => $value){
-            $conversation_divs .= '
-            <div class="col-md-12 border">
-                <a href="/final_project_ddwt21/messages/?chat_id='.$value['partner_user_id'].'" class="stretched-link conversation">
-                    <div class="font-weight-bold">'.$value['full_name'].'</div>
-                </a>
-                <div class="font-weight-light no-overflow">'.$value['last_message'].'</div>
-            </div>';
+            if ($value['partner_user_id'] == $chat_id) {
+                if (get_converstion_read_count($pdo, $user1, $value['partner_user_id'])) {
+                    $conversation_divs .= '
+                    <div class="col-md-12 border bg-lightgrey">
+                        <a href="/final_project_ddwt21/messages/?chat_id='.$value['partner_user_id'].'" class="stretched-link conversation">
+                            <div class="font-weight-bold">'.$value['full_name'].'</div>
+                        </a>
+                        <div class="font-weight-bold no-overflow">'.$value['last_message'].'</div>
+                    </div>';
+                } else {
+                    $conversation_divs .= '
+                    <div class="col-md-12 border bg-lightgrey">
+                        <a href="/final_project_ddwt21/messages/?chat_id='.$value['partner_user_id'].'" class="stretched-link conversation">
+                            <div class="font-weight-bold">'.$value['full_name'].'</div>
+                        </a>
+                        <div class="font-weight-light no-overflow">'.$value['last_message'].'</div>
+                    </div>';
+                } 
+            } else {
+                if (get_converstion_read_count($pdo, $user1, $value['partner_user_id'])) {
+                    $conversation_divs .= '
+                    <div class="col-md-12 border">
+                        <a href="/final_project_ddwt21/messages/?chat_id='.$value['partner_user_id'].'" class="stretched-link conversation">
+                            <div class="font-weight-bold">'.$value['full_name'].'</div>
+                        </a>
+                        <div class="font-weight-bold no-overflow">'.$value['last_message'].'</div>
+                    </div>';
+                } else {
+                    $conversation_divs .= '
+                    <div class="col-md-12 border">
+                        <a href="/final_project_ddwt21/messages/?chat_id='.$value['partner_user_id'].'" class="stretched-link conversation">
+                            <div class="font-weight-bold">'.$value['full_name'].'</div>
+                        </a>
+                        <div class="font-weight-light no-overflow">'.$value['last_message'].'</div>
+                    </div>';
+                }
+            }
+            
         }
     }
     $conversation_divs .= '</div>';
