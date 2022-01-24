@@ -18,6 +18,8 @@
             <h5><?= $page_subtitle ?></h5>
 
             <div class="pd-15">&nbsp;</div>
+            
+            <h6><?= $note ?></h6>
 
             <form action="<?php $form_action ?>" method="POST">
                 <div class="form-group">
@@ -65,8 +67,8 @@
                 '                <div class="form-group">
                     <label for="inputAccount">Account type: </label>
                     <select name="account_type_id" id="account">
-                        <option value="1">Eigenaar</option>
-                        <option value="2">Gebruiker</option>
+                        <option value="1">Owner</option>
+                        <option value="2">Tenant</option>
                     </select>  </div>';} else{
                     echo '<input type="hidden" name="user_id" value="'. $user_id.'">';
                 } ?>

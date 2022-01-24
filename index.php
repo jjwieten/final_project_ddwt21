@@ -91,8 +91,7 @@ $router->get('/', function() use($navigation_template, $db){
     $navigation = get_navigation($navigation_template, 1, $unread_messages);
 
     /* Page content */
-    $page_subtitle = 'The place where you can kick of your student life or upgrade your room!';
-    $page_content = 'Content.';
+    $page_subtitle = 'The place where you can kick off your student life or upgrade your room!';
 
     /* Get error msg from POST route */
     if ( isset($_GET['error_msg']) ) { $error_msg = get_error($_GET['error_msg']); }
@@ -131,7 +130,7 @@ $router->get('/register/', function() use($navigation_template, $db){
     }
     /* Page info */
     $page_title = 'Register';
-    $page_subtitle ='Create your account here';
+    $note = 'Note: To offer rooms you need to register as Owner, to find rooms you need to register as Tenant. You cannot change this after you create your account.';
     $breadcrumbs = get_breadcrumbs([
         'Home' => na('/final_project_ddwt21/', False),
         'Register' => na('/final_project_ddwt21/register/', True)
@@ -199,7 +198,7 @@ $router->get('/messages/', function() use($navigation_template, $db){
     }
     $unread_messages = unread_count($db);
     $navigation = get_navigation($navigation_template, 4, $unread_messages);
-    
+
         /* Get error msg from POST route */
         if (isset($_GET['error_msg'])) { $error_msg = get_error($_GET['error_msg']); }
 

@@ -717,7 +717,9 @@ function get_messages($pdo, $user1, $user2){
 function get_messages_divs($pdo, $user1, $user2){
     $messages = get_messages($pdo, $user1, $user2);
     $user2_name = get_user_fullname($pdo, $user2);
-    $message_divs = '<div class="col-md-9"><div class="border col-md-12 overflow-auto d-flex flex-column-reverse" style="height:50vh;">';
+    $message_divs = '<div class="col-md-9">
+    <a href="/final_project_ddwt21/messages/?chat_id='.$user2.'" role="button" class="btn btn-secondary btn-sm btn-block mb-1">Check for new messages</a>
+    <div class="border col-md-12 overflow-auto d-flex flex-column-reverse" style="height:50vh;">';
     foreach($messages as $key => $value){
         if ($value['sender_id'] == $user1) {
             $message_divs .= '
@@ -749,7 +751,7 @@ function get_messages_divs($pdo, $user1, $user2){
         <textarea class="form-control" rows="3" id="content" name="content" placeholder="Type your reply here..."></textarea>
     </div>
     <input type="hidden" id="receiver_id" name="receiver_id" value='.$user2.'>
-    <input type="submit" value="Send reply" class="btn btn-primary">
+    <input type="submit" value="Send reply" class="btn btn-primary btn-block">
     </form></div>';
 
     return $message_divs;
